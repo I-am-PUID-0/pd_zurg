@@ -42,10 +42,14 @@ def setup():
         else:
             logger.info(f"Copying Zurg app from base: {zurg_app_base} to {zurg_executable_path}")
             shutil.copy(zurg_app_base, zurg_executable_path)
-
+        if os.path.exists(zurg_config_override):
+            logger.info(f"Copying Zurg config from override: {zurg_config_override} to {config_file_path}")
+            shutil.copy(zurg_config_override, config_file_path)
+        else:
+            logger.info(f"Copying Zurg config from base: {zurg_config_base} to {config_file_path}")
+            shutil.copy(zurg_config_base, config_file_path)
         port = random.randint(9001, 9999)
         logger.info(f"Selected port {port} for {key_type}")
-        shutil.copy(zurg_config_override, config_file_path)
         update_token(config_file_path, token)
         update_port(config_file_path, port)
         os.environ[f'ZURG_PORT_{key_type}'] = str(port)

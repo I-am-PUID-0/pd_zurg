@@ -1,32 +1,32 @@
-# pdrcrd
+# pd_zurg
 
 ## Description
-A combined docker image for the unified deployment of **[itsToggle's](https://github.com/itsToggle)** projects -- **[plex_debrid](https://github.com/itsToggle/plex_debrid)** and **[rclone_RD](https://github.com/itsToggle/rclone_RD)**
+A combined docker image for the unified deployment of **[itsToggle's](https://github.com/itsToggle)**, **[yowmamasita's](https://github.com/yowmamasita)**, and **[ncw's](https://github.com/ncw)** projects -- **[plex_debrid](https://github.com/itsToggle/plex_debrid)**, **[zurg](https://github.com/debridmediamanager/zurg-testing)**, and **[rclone](https://github.com/rclone/rclone)**
 
 
 ## Features
- - [Optional independent or combined utilization of rclone_RD and plex_debrid](https://github.com/I-am-PUID-0/pdrcrd/wiki#optional-independent-or-combined-utilization-of-rclone_rd-and-plex_debrid)
- - [Simultaneous independent rclone_RD mounts](https://github.com/I-am-PUID-0/pdrcrd/wiki#simultaneous-independent-rclone_rd-mounts)
- - [Bind-mounts rclone_RD to the host](https://github.com/I-am-PUID-0/pdrcrd/wiki#bind-mounts-rclone_rd-to-the-host)
- - [Debrid service API Key passed to rclone_rd and plex_debrid via docker environment variable](https://github.com/I-am-PUID-0/pdrcrd/wiki#debrid-api-key-passed-to-rclone_rd-and-plex_debrid-via-docker-environment-variable)
- - [rclone_RD config automatically generated](https://github.com/I-am-PUID-0/pdrcrd/wiki#rclone_rd-config-automatically-generated)
- - [rclone_RD flags passed via docker environment variable](https://github.com/I-am-PUID-0/pdrcrd/wiki#rclone_rd-flags-passed-via-docker-environment-variable)
- - [Fuse.conf ```user_allow_other``` applied within the container vs. the host](https://github.com/I-am-PUID-0/pdrcrd/wiki#fuseconf-user_allow_other-applied-within-the-container-vs-the-host)
- - [Plex server values passed to plex_debrid settings.json via docker environment variables](https://github.com/I-am-PUID-0/pdrcrd/wiki#plex-server-values-passed-to-plex_debrid-settingsjson-via-docker-environment-variables)
- - [Automatic Update of plex_debrid to the latest version](https://github.com/I-am-PUID-0/pdrcrd/wiki#automatic-update-of-plex_debrid-to-the-latest-version)
- - [Use of .env file for setting environment variables](https://github.com/I-am-PUID-0/pdrcrd/wiki#use-of-env-file-for-setting-environment-variables)
- - [Duplicate Cleanup](https://github.com/I-am-PUID-0/pdrcrd/wiki#duplicate-cleanup) 
+ - [Optional independent or combined utilization of zurg/rclone and plex_debrid](https://github.com/I-am-PUID-0/pd_zurg/wiki#optional-independent-or-combined-utilization-of-rclone-and-plex_debrid)
+ - [Simultaneous independent rclone mounts](https://github.com/I-am-PUID-0/pd_zurg/wiki#simultaneous-independent-rclone-mounts)
+ - [Bind-mounts rclone to the host](https://github.com/I-am-PUID-0/pd_zurg/wiki#bind-mounts-rclone-to-the-host)
+ - [Debrid service API Key passed to zurg and plex_debrid via docker environment variable](https://github.com/I-am-PUID-0/pd_zurg/wiki#debrid-api-key-passed-to-rclone-and-plex_debrid-via-docker-environment-variable)
+ - [rclone config automatically generated](https://github.com/I-am-PUID-0/pd_zurg/wiki#rclone-config-automatically-generated)
+ - [rclone flags passed via docker environment variable](https://github.com/I-am-PUID-0/pd_zurg/wiki#rclone-flags-passed-via-docker-environment-variable)
+ - [Fuse.conf ```user_allow_other``` applied within the container vs. the host](https://github.com/I-am-PUID-0/pd_zurg/wiki#fuseconf-user_allow_other-applied-within-the-container-vs-the-host)
+ - [Plex server values passed to plex_debrid settings.json via docker environment variables](https://github.com/I-am-PUID-0/pd_zurg/wiki#plex-server-values-passed-to-plex_debrid-settingsjson-via-docker-environment-variables)
+ - [Automatic Update of plex_debrid to the latest version](https://github.com/I-am-PUID-0/pd_zurg/wiki#automatic-update-of-plex_debrid-to-the-latest-version)
+ - [Use of .env file for setting environment variables](https://github.com/I-am-PUID-0/pd_zurg/wiki#use-of-env-file-for-setting-environment-variables)
+ - [Duplicate Cleanup](https://github.com/I-am-PUID-0/pd_zurg/wiki#duplicate-cleanup) 
 
 ## Docker Hub
-A prebuilt image is hosted on [docker hub](https://hub.docker.com/r/iampuid0/pdrcrd) 
+A prebuilt image is hosted on [docker hub](https://hub.docker.com/r/iampuid0/pd_zurg) 
 
 
 ## Docker-compose
 ```
 services:
-  pdrcrd:
-    container_name: pdrcrd
-    image: iampuid0/pdrcrd:latest  
+  pd_zurg:
+    container_name: pd_zurg
+    image: iampuid0/pd_zurg:latest  
     stdin_open: true # docker run -i
     tty: true        # docker run -t    
     volumes:
@@ -56,24 +56,22 @@ services:
 ### Docker CLI
 
 ```
-docker build -t yourimagename https://github.com/I-am-PUID-0/pdrcrd.git
+docker build -t yourimagename https://github.com/I-am-PUID-0/pd_zurg.git
 ```
 
-## Install script for Ubuntu and/or WSL
-Shell script to install docker and/or pdrcrd. See the [pdrcrd Wiki](https://github.com/I-am-PUID-0/pdrcrd/wiki/Setup-Guides#install-script-for-ubuntu-andor-wsl) for details.
 
 ## Automatic Updates
 If you would like to enable automatic updates for plex_debrid, utilize the ```AUTO_UPDATE``` environment variable. 
-Additional details can be found in the [pdrcrd Wiki](https://github.com/I-am-PUID-0/pdrcrd/wiki/Settings#automatic-updates)
+Additional details can be found in the [pd_zurg Wiki](https://github.com/I-am-PUID-0/pd_zurg/wiki/Settings#automatic-updates)
 
 
 ## Environment Variables
 
 To customize some properties of the container, the following environment
-variables can be passed via the `-e` parameter (one for each variable), or via the docker-compose file within the ```environment:``` section, or with a .env file saved to the config directory -- See the wiki for more info on using the [.env](https://github.com/I-am-PUID-0/pdrcrd/wiki/Settings#use-of-env-file-for-setting-environment-variables).  Value
+variables can be passed via the `-e` parameter (one for each variable), or via the docker-compose file within the ```environment:``` section, or with a .env file saved to the config directory -- See the wiki for more info on using the [.env](https://github.com/I-am-PUID-0/pd_zurg/wiki/Settings#use-of-env-file-for-setting-environment-variables).  Value
 of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 
-| Variable       | Description                                  | Default | Required for rclone_RD| Required for plex_debrid|
+| Variable       | Description                                  | Default | Required for rclone| Required for plex_debrid|
 |----------------|----------------------------------------------|---------|:-:|:-:|
 |`TZ`| [TimeZone](http://en.wikipedia.org/wiki/List_of_tz_database_time_zones) used by the container | ` ` |
 |`RD_API_KEY`| [RealDebrid API key](https://real-debrid.com/apitoken) | ` ` | :heavy_check_mark:| :heavy_check_mark:|
@@ -95,8 +93,8 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 |`AUTO_UPDATE_INTERVAL`| Interval between automatic update checks in hours. Vaules can be any positive [whole](https://www.oxfordlearnersdictionaries.com/us/definition/english/whole-number) or [decimal](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095705740;jsessionid=3FDC96CC0D79CCE69702661D025B9E9B#:~:text=The%20separator%20used%20between%20the,number%20expressed%20in%20decimal%20representation.) point based number. Ex. a value of .5 would yield thirty minutes and 1.5 would yield one and a half hours | `24` |
 |`DUPLICATE_CLEANUP`| Automated cleanup of duplicate content in Plex.  | `false` |
 |`CLEANUP_INTERVAL`| Interval between duplicate cleanup in hours. Vaules can be any positive [whole](https://www.oxfordlearnersdictionaries.com/us/definition/english/whole-number) or [decimal](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095705740;jsessionid=3FDC96CC0D79CCE69702661D025B9E9B#:~:text=The%20separator%20used%20between%20the,number%20expressed%20in%20decimal%20representation.) point based number. Ex. a value of .5 would yield thirty minutes and 1.5 would yield one and a half hours | `24` |
-|`PDRCRD_LOG_LEVEL`| The level at which logs should be captured. See the python [Logging Levels](https://docs.python.org/3/library/logging.html#logging-levels) documentation for more details  | `INFO` |
-|`PDRCRD_LOG_COUNT`| The number logs to retain. Result will be value + current log  | `2` |
+|`PDZURG_LOG_LEVEL`| The level at which logs should be captured. See the python [Logging Levels](https://docs.python.org/3/library/logging.html#logging-levels) documentation for more details  | `INFO` |
+|`PDZURG_LOG_COUNT`| The number logs to retain. Result will be value + current log  | `2` |
 
 ## Data Volumes
 
@@ -108,23 +106,23 @@ format: `<HOST_DIR>:<CONTAINER_DIR>[:PERMISSIONS]`.
 |-----------------|-------------|-------------|
 |`/config`| rw | This is where the application stores the rclone.conf, plex_debrid settings.json, and any files needing persistence. CAUTION: rclone.conf is overwritten upon start/restart of the container. Do NOT use an existing rclone.conf file if you have other rclone services |
 |`/log`| rw | This is where the application stores its log files |
-|`/mnt`| rw | This is where rclone_RD will be mounted. Not required when only utilizing plex_debrid   |
+|`/mnt`| rw | This is where rclone will be mounted. Not required when only utilizing plex_debrid   |
 
 ## TODO
 
-See the [pdrcrd roadmap](https://github.com/users/I-am-PUID-0/projects/2) for a list of planned features and enhancements.
+See the [pd_zurg roadmap](https://github.com/users/I-am-PUID-0/projects/2) for a list of planned features and enhancements.
 
 ## Deployment
 
-pdrcrd allows for the simultaneous or individual deployment of plex_debrid and/or rclone_RD
+pd_zurg allows for the simultaneous or individual deployment of plex_debrid and/or rclone
 
-For additional details on deployment, see the [pdrcrd Wiki](https://github.com/I-am-PUID-0/pdrcrd/wiki/Settings#deployment)
+For additional details on deployment, see the [pd_zurg Wiki](https://github.com/I-am-PUID-0/pd_zurg/wiki/Settings#deployment)
 ## Community
 
-### pdrcrd
-- For questions related to pdrcrd, see the GitHub [discussions](https://github.com/I-am-PUID-0/pdrcrd/discussions)
-- or create a new [issue](https://github.com/I-am-PUID-0/pdrcrd/issues) if you find a bug or have an idea for an improvement.
-- or join the pdrcrd [discord server](https://discord.gg/n5nQRYtrw2)
+### pd_zurg
+- For questions related to pd_zurg, see the GitHub [discussions](https://github.com/I-am-PUID-0/pd_zurg/discussions)
+- or create a new [issue](https://github.com/I-am-PUID-0/pd_zurg/issues) if you find a bug or have an idea for an improvement.
+- or join the pd_zurg [discord server](https://discord.gg/n5nQRYtrw2)
 
 ### plex_debrid
 - For questions related to plex_debrid, see the GitHub [discussions](https://github.com/itsToggle/plex_debrid/discussions) 
@@ -134,8 +132,15 @@ For additional details on deployment, see the [pdrcrd Wiki](https://github.com/I
 
 ## Buy **[itsToggle](https://github.com/itsToggle)** a beer/coffee? :)
 
-If you enjoy the underlying projects and want to buy itsToggle a beer/coffee, feel free to use his real-debrid [affiliate link](http://real-debrid.com/?id=5708990) or send him a virtual beverage via [PayPal](https://www.paypal.com/paypalme/oidulibbe) :)
+If you enjoy the underlying projects and want to buy itsToggle a beer/coffee, feel free to use the real-debrid [affiliate link](http://real-debrid.com/?id=5708990) or send a virtual beverage via [PayPal](https://www.paypal.com/paypalme/oidulibbe) :)
 
+## Buy **[yowmamasita](https://github.com/yowmamasita)** a beer/coffee? :)
+
+If you enjoy the underlying projects and want to buy yowmamasita a beer/coffee, feel free to use the [GitHub sponsor link](https://github.com/sponsors/debridmediamanager)
+
+## Buy **[ncw](https://github.com/ncw)** a beer/coffee? :) 
+
+If you enjoy the underlying projects and want to buy Nick Craig-Wood a beer/coffee, feel free to use the website's [sponsor links](hhttps://rclone.org/sponsor/)
 
 ## GitHub Workflow Status
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/I-am-PUID-0/pdrcrd/docker-image.yml)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/I-am-PUID-0/pd_zurg/docker-image.yml)

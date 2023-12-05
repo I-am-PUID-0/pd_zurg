@@ -8,7 +8,7 @@ from zurg import zurg
 def main():
     logger = get_logger()
 
-    version = '0.0.1'
+    version = '0.0.2'
 
     ascii_art = f'''
                                                                           
@@ -39,32 +39,30 @@ def main():
     thread = threading.Thread(target=healthcheck)
     thread.daemon = True
     thread.start()
-
-    try:
-        if not DUPECLEAN:
-            pass
-        elif DUPECLEAN:
-            duplicate_cleanup.duplicate_cleanup()
-    except Exception as e:
-        logger.error(e)
-        
+       
     try:
         if ZURG is None or str(ZURG).lower() == 'false':
             pass
         elif str(ZURG).lower() == 'true':
             zurg.setup()
+            try:
+                if RDAPIKEY or ADAPIKEY:
+                    if RCLONEMN:
+                        rclone.setup()
+                        try:
+                            if not DUPECLEAN:
+                                pass
+                            elif DUPECLEAN:
+                                duplicate_cleanup.duplicate_cleanup()
+                        except Exception as e:
+                            logger.error(e)                        
+                else:
+                    raise MissingAPIKeyException()
+            except Exception as e:
+                logger.error(e)                    
     except Exception as e:
         logger.error(e)
         
-    try:
-        if RDAPIKEY or ADAPIKEY:
-            if RCLONEMN:
-                rclone.setup()
-        else:
-            raise MissingAPIKeyException()
-    except Exception as e:
-        logger.error(e)
-
     try:
         if PLEXUSER:
             setup.pd_setup()

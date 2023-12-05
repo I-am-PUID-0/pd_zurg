@@ -18,12 +18,12 @@ try:
     else:
         RCLONEMN_RD = RCLONEMN_AD = RCLONEMN
 
-    if RDAPIKEY and RCLONEMN:
+    if ZURG and RDAPIKEY and RCLONEMN:
         DIR = f'/data/{RCLONEMN_RD}/movies'
         if not os.path.isdir(DIR):
             error_messages.append("The RealDebrid rclone mount is not accessible")
 
-    if ADAPIKEY and RCLONEMN:
+    if ZURG and ADAPIKEY and RCLONEMN:
         DIR = f'/data/{RCLONEMN_AD}/movies'
         if not os.path.isdir(DIR):
             error_messages.append("The AllDebrid rclone mount is not accessible")

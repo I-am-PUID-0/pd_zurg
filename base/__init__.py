@@ -133,16 +133,16 @@ class CustomTimedRotatingFileHandler(TimedRotatingFileHandler):
             result = result[:len(result) - self.backupCount]
         return result
 
-def get_logger(log_name='pdrcrd', log_dir='./log'):
+def get_logger(log_name='PDZURG', log_dir='./log'):
     current_date = time.strftime("%Y-%m-%d")
     log_filename = f"{log_name}-{current_date}.log"
     logger = logging.getLogger(log_name)
-    backupCount_env = os.getenv('PDRCRD_LOG_COUNT')
+    backupCount_env = os.getenv('PDZURG_LOG_COUNT')
     try:
         backupCount = int(backupCount_env)
     except (ValueError, TypeError):
         backupCount = 2
-    log_level_env = os.getenv('PDRCRD_LOG_LEVEL')
+    log_level_env = os.getenv('PDZURG_LOG_LEVEL')
     if log_level_env:
         log_level = log_level_env.upper()
     else:

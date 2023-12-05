@@ -15,8 +15,5 @@ RUN \
   pip3 install -r /requirements.txt
 COPY --from=builder /app/zurg /zurg/zurg
 HEALTHCHECK --interval=60s --timeout=10s \
-  CMD python /healthcheck.py
-#VOLUME /config  
-ENTRYPOINT ["/bin/sh"]
-#CMD /bin/sh
-#CMD ["python", "/main.py"];/bin/sh
+  CMD python /healthcheck.py  
+ENTRYPOINT ["python", "/main.py"]

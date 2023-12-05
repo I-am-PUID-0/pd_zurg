@@ -1,0 +1,294 @@
+{
+    "Content Services": [
+        "Plex",
+        "Trakt",
+        "Overseerr"
+    ],
+    "Plex users": [
+        []
+    ],
+    "Plex auto remove": "movie",
+    "Trakt users": [],
+    "Trakt lists": [],
+    "Trakt auto remove": "movie",
+    "Trakt early movie releases": "false",
+    "Overseerr users": [
+        "all"
+    ],
+    "Overseerr API Key": "",
+    "Overseerr Base URL": "",
+    "Library collection service": [
+        "Plex Library"
+    ],
+    "Library update services": [
+        "Plex Libraries"
+    ],
+    "Library ignore services": [
+        "Local Ignore List"
+    ],
+    "Trakt library user": [],
+    "Trakt refresh user": [],
+    "Plex library refresh": [
+        "1",
+        "2"
+    ],
+    "Plex library partial scan": "true",
+    "Plex library refresh delay": "2",
+    "Plex server address": "http://localhost:32400",
+    "Plex library check": [],
+    "Plex ignore user": "",
+    "Trakt ignore user": "",
+    "Local ignore list path": "/config/",
+    "Jellyfin API Key": "",
+    "Jellyfin server address": "http://localhost:8096",
+    "Sources": [
+        "torrentio"
+    ],
+    "Versions": [
+        [
+            "1080p SDR",
+            [
+                [
+                    "retries",
+                    "<=",
+                    "48"
+                ],
+                [
+                    "media type",
+                    "all",
+                    ""
+                ]
+            ],
+            "true",
+            [
+                [
+                    "cache status",
+                    "requirement",
+                    "cached",
+                    ""
+                ],
+                [
+                    "resolution",
+                    "requirement",
+                    "<=",
+                    "1080"
+                ],
+                [
+                    "resolution",
+                    "preference",
+                    "highest",
+                    ""
+                ],
+                [
+                    "title",
+                    "requirement",
+                    "exclude",
+                    "([^A-Z0-9]|HD|HQ)(CAM|T(ELE)?(S(YNC)?|C(INE)?)|ADS|HINDI)([^A-Z0-9]|RIP|$)"
+                ],
+                [
+                    "title",
+                    "requirement",
+                    "exclude",
+                    "(3D)"
+                ],
+                [
+                    "title",
+                    "requirement",
+                    "exclude",
+                    "(DO?VI?)"
+                ],
+                [
+                    "title",
+                    "requirement",
+                    "exclude",
+                    "(HDR)"
+                ],
+                [
+                    "title",
+                    "preference",
+                    "include",
+                    "(EXTENDED|REMASTERED|DIRECTORS|THEATRICAL|UNRATED|UNCUT|CRITERION|ANNIVERSARY|COLLECTORS|LIMITED|SPECIAL|DELUXE|SUPERBIT|RESTORED|REPACK)"
+                ],
+                [
+                    "size",
+                    "preference",
+                    "highest",
+                    ""
+                ],
+                [
+                    "seeders",
+                    "preference",
+                    "highest",
+                    ""
+                ],
+                [
+                    "size",
+                    "requirement",
+                    ">=",
+                    "0.1"
+                ]
+            ]
+        ]
+    ],
+    "Special character renaming": [
+        [
+            "&",
+            "and"
+        ],
+        [
+            "\u00fc",
+            "ue"
+        ],
+        [
+            "\u00e4",
+            "ae"
+        ],
+        [
+            "\u00e2",
+            "a"
+        ],
+        [
+            "\u00e1",
+            "a"
+        ],
+        [
+            "\u00e0",
+            "a"
+        ],
+        [
+            "\u00f6",
+            "oe"
+        ],
+        [
+            "\u00f4",
+            "o"
+        ],
+        [
+            "\u00df",
+            "ss"
+        ],
+        [
+            "\u00e9",
+            "e"
+        ],
+        [
+            "\u00e8",
+            "e"
+        ],
+        [
+            "\u00ee",
+            "i"
+        ],
+        [
+            "sh!t",
+            "shit"
+        ],
+        [
+            "f**k",
+            "fuck"
+        ],
+        [
+            "f**king",
+            "fucking"
+        ],
+        [
+            ":",
+            ""
+        ],
+        [
+            "(",
+            ""
+        ],
+        [
+            ")",
+            ""
+        ],
+        [
+            "`",
+            ""
+        ],
+        [
+            "\u00b4",
+            ""
+        ],
+        [
+            ",",
+            ""
+        ],
+        [
+            "!",
+            ""
+        ],
+        [
+            "?",
+            ""
+        ],
+        [
+            " - ",
+            " "
+        ],
+        [
+            "'",
+            ""
+        ],
+        [
+            "\u200b",
+            ""
+        ],
+        [
+            "*",
+            ""
+        ],
+        [
+            " ",
+            "."
+        ]
+    ],
+    "Rarbg API Key": "r05xvbq6ul",
+    "Jackett Base URL": "http://127.0.0.1:9117",
+    "Jackett API Key": "",
+    "Jackett resolver timeout": "1",
+    "Jackett indexer filter": "!status:failing,test:passed",
+    "Prowlarr Base URL": "http://127.0.0.1:9696",
+    "Prowlarr API Key": "",
+    "Orionoid API Key": "",
+    "Orionoid Scraper Parameters": [
+        [
+            "limitcount",
+            "5"
+        ],
+        [
+            "sortvalue",
+            "popularity"
+        ],
+        [
+            "streamtype",
+            "torrent"
+        ],
+        [
+            "filename",
+            "true"
+        ]
+    ],
+    "Nyaa parameters": "&c=1_0&s=seeders&o=desc",
+    "Nyaa sleep time": "5",
+    "Nyaa proxy": "nyaa.si",
+    "Torrentio Scraper Parameters": "https://torrentio.strem.fun/sort=qualitysize|qualityfilter=480p,scr,cam/manifest.json",
+    "Debrid Services": [
+        "Real Debrid"
+    ],
+    "Tracker specific Debrid Services": [],
+    "Real Debrid API Key": "",
+    "All Debrid API Key": "",
+    "Premiumize API Key": "",
+    "Debrid Link API Key": "",
+    "Put.io API Key": "",
+    "Show Menu on Startup": "true",
+    "Debug printing": "false",
+    "Log to file": "false",
+    "version": [
+        "2.92",
+        "Settings compatible update",
+        []
+    ]
+}

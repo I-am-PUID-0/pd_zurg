@@ -1,0 +1,6 @@
+python-dotenv
+regex
+schedule
+psutil
+plexapi
+requests

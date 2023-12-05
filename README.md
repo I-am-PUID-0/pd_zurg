@@ -176,7 +176,7 @@ If you enjoy the underlying projects and want to buy yowmamasita a beer/coffee, 
 
 ## Buy **[ncw](https://github.com/ncw)** a beer/coffee? :) 
 
-If you enjoy the underlying projects and want to buy Nick Craig-Wood a beer/coffee, feel free to use the website's [sponsor links](hhttps://rclone.org/sponsor/)
+If you enjoy the underlying projects and want to buy Nick Craig-Wood a beer/coffee, feel free to use the website's [sponsor links](https://rclone.org/sponsor/)
 
 ## GitHub Workflow Status
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/I-am-PUID-0/pd_zurg/docker-image.yml)

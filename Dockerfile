@@ -1,4 +1,4 @@
-﻿﻿FROM ghcr.io/debridmediamanager/zurg-testing:latest AS builder
+﻿FROM ghcr.io/debridmediamanager/zurg-testing:latest AS builder
 
 FROM rclone/rclone:latest
 WORKDIR /

@@ -8,7 +8,7 @@ from zurg import zurg
 def main():
     logger = get_logger()
 
-    version = '0.0.3'
+    version = '0.0.4'
 
     ascii_art = f'''
                                                                           

@@ -8,7 +8,7 @@ from zurg import zurg
 def main():
     logger = get_logger()
 
-    version = '0.0.4'
+    version = '0.0.5'
 
     ascii_art = f'''
                                                                           
@@ -48,14 +48,14 @@ def main():
             try:
                 if RDAPIKEY or ADAPIKEY:
                     if RCLONEMN:
-                        rclone.setup()
                         try:
                             if not DUPECLEAN:
                                 pass
                             elif DUPECLEAN:
                                 duplicate_cleanup.duplicate_cleanup()
                         except Exception as e:
-                            logger.error(e)                        
+                            logger.error(e)                         
+                        rclone.setup()                       
                 else:
                     raise MissingAPIKeyException()
             except Exception as e:

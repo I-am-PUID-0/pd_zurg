@@ -100,6 +100,8 @@ docker build -t yourimagename https://github.com/I-am-PUID-0/pd_zurg.git
 If you would like to enable automatic updates for plex_debrid, utilize the ```AUTO_UPDATE``` environment variable. 
 Additional details can be found in the [pd_zurg Wiki](https://github.com/I-am-PUID-0/pd_zurg/wiki/Settings#automatic-updates)
 
+If you would like to enable automatic updates for Zurg, utilize the ```ZURG_UPDATE``` environment variable. 
+Additional details can be found in the [pd_zurg Wiki](https://github.com/I-am-PUID-0/pd_zurg/wiki/Settings#automatic-updates)
 
 ## Environment Variables
 
@@ -107,11 +109,11 @@ To customize some properties of the container, the following environment
 variables can be passed via the `-e` parameter (one for each variable), or via the docker-compose file within the ```environment:``` section, or with a .env file saved to the config directory -- See the wiki for more info on using the [.env](https://github.com/I-am-PUID-0/pd_zurg/wiki/Settings#use-of-env-file-for-setting-environment-variables).  Value
 of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 
-| Variable       | Description                                  | Default | Required for rclone| Required for plex_debrid|
+| Variable       | Description                                  | Default | Required for rclone| Required for plex_debrid| Required for zurg|
 |----------------|----------------------------------------------|---------|:-:|:-:|
 |`TZ`| [TimeZone](http://en.wikipedia.org/wiki/List_of_tz_database_time_zones) used by the container | ` ` |
-|`RD_API_KEY`| [RealDebrid API key](https://real-debrid.com/apitoken) | ` ` | :heavy_check_mark:| :heavy_check_mark:|
-|`AD_API_KEY`| [AllDebrid API key](https://alldebrid.com/apikeys/) | ` ` | :heavy_check_mark:| :heavy_check_mark:|
+|`RD_API_KEY`| [RealDebrid API key](https://real-debrid.com/apitoken) | ` ` | | :heavy_check_mark:| :heavy_check_mark:|
+|`AD_API_KEY`| [AllDebrid API key](https://alldebrid.com/apikeys/) | ` ` | | :heavy_check_mark:| :heavy_check_mark:|
 |`RCLONE_MOUNT_NAME`| A name for the rclone mount | ` ` | :heavy_check_mark:|
 |`RCLONE_LOG_LEVEL`| [Log level](https://rclone.org/docs/#log-level-level) for rclone | `NOTICE` |
 |`RCLONE_LOG_FILE`| [Log file](https://rclone.org/docs/#log-file-file) for rclone | ` ` |
@@ -131,6 +133,10 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 |`CLEANUP_INTERVAL`| Interval between duplicate cleanup in hours. Vaules can be any positive [whole](https://www.oxfordlearnersdictionaries.com/us/definition/english/whole-number) or [decimal](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095705740;jsessionid=3FDC96CC0D79CCE69702661D025B9E9B#:~:text=The%20separator%20used%20between%20the,number%20expressed%20in%20decimal%20representation.) point based number. Ex. a value of .5 would yield thirty minutes and 1.5 would yield one and a half hours | `24` |
 |`PDZURG_LOG_LEVEL`| The level at which logs should be captured. See the python [Logging Levels](https://docs.python.org/3/library/logging.html#logging-levels) documentation for more details  | `INFO` |
 |`PDZURG_LOG_COUNT`| The number logs to retain. Result will be value + current log  | `2` |
+|`ZURG_ENABLED`| Set the value "true" to enable the Zurg process | `false ` | | | :heavy_check_mark:|
+|`ZURG_VERSION`| The version of Zurg to use. If enabled, the value should contain v0.9.x or v0.9.x-hotfix.x format | `latest` | | | |
+|`ZURG_UPDATE`| Set the value "true" to enable automatic updates of Zurg | `false` | | | |
+|`LOG_LEVEL`| Set the log level for Zurg | `INFO` | | | |
 
 ## Data Volumes
 
@@ -142,7 +148,9 @@ format: `<HOST_DIR>:<CONTAINER_DIR>[:PERMISSIONS]`.
 |-----------------|-------------|-------------|
 |`/config`| rw | This is where the application stores the rclone.conf, plex_debrid settings.json, and any files needing persistence. CAUTION: rclone.conf is overwritten upon start/restart of the container. Do NOT use an existing rclone.conf file if you have other rclone services |
 |`/log`| rw | This is where the application stores its log files |
-|`/mnt`| rw | This is where rclone will be mounted. Not required when only utilizing plex_debrid   |
+|`/data`| rshared  | This is where rclone will be mounted. Not required when only utilizing plex_debrid   |
+|`/zurg/RD`| rw| This is where Zurg will store the active configuration and data for RealDebrid. Not required when only utilizing plex_debrid   |
+|`/zurg/AD`| rw | This is where Zurg will store the active configuration and data for AllDebrid. Not required when only utilizing plex_debrid   |
 
 ## TODO
 

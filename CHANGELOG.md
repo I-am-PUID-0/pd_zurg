@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Version [0.1.0] - 2023-12-12
+
+### Added
+
+- ZURG_VERSION: The version of ZURG to use as defined with the ZURG_VERSION env var 
+
+### Changed
+
+- zurg: container pulls latest or user-defined version of ZURG from github upon startup
+
+
 ## Version [0.0.5] - 2023-12-06
 
 ### Fixed

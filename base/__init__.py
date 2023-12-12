@@ -3,6 +3,7 @@ from dotenv import load_dotenv, find_dotenv
 from datetime import datetime, timedelta
 import logging
 from logging.handlers import TimedRotatingFileHandler
+from packaging.version import Version, parse as parse_version
 import time
 import os
 import requests
@@ -18,9 +19,28 @@ import threading
 import glob
 import re
 import random
+import zipfile
+import platform
 
 
 load_dotenv(find_dotenv('./config/.env'))
+
+class SubprocessLogger:
+    def __init__(self, logger, key_type):
+        self.logger = logger
+        self.key_type = key_type
+
+    def log_subprocess_output(self, pipe):
+        try:
+            for line in iter(pipe.readline, ''):
+                self.logger.info(f"{self.key_type} subprocess: {line.strip()}")
+        except ValueError as e:
+            self.logger.error(f"Error reading subprocess output for {self.key_type}: {e}")
+
+    def start(self, process):
+        log_thread = threading.Thread(target=self.log_subprocess_output, args=(process.stdout,))
+        log_thread.daemon = True
+        log_thread.start()
 
 class MissingAPIKeyException(Exception):
     def __init__(self):
@@ -176,3 +196,4 @@ DUPECLEAN = os.getenv('DUPLICATE_CLEANUP')
 CLEANUPINT = os.getenv('CLEANUP_INTERVAL')
 RCLONEMN = os.getenv("RCLONE_MOUNT_NAME")
 ZURG = os.getenv("ZURG_ENABLED")
+ZURGVERSION = os.getenv("ZURG_VERSION")

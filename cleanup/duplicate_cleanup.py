@@ -151,7 +151,7 @@ def duplicate_cleanup():
             if value is None:
                 logger.error("Environment variable '%s' is not set.", var_name)
             else:
-                logger.info("Environment variable '%s' is set.", var_name)
+                logger.debug("Environment variable '%s' is set.", var_name)
         if all(os.environ.get(var_name) for var_name in env_variables):   
             if DUPECLEAN is not None and cleanup_interval() == 24:
                 logger.info("Duplicate cleanup interval missing")

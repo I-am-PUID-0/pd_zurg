@@ -2,13 +2,13 @@ from base import *
 from plex_debrid_ import update, setup 
 from rclone_rd import rclone
 from cleanup import duplicate_cleanup
-from zurg import zurg
+from zurg import zurg, download
 
 
 def main():
     logger = get_logger()
 
-    version = '0.0.5'
+    version = '0.1.0'
 
     ascii_art = f'''
                                                                           
@@ -44,6 +44,7 @@ def main():
         if ZURG is None or str(ZURG).lower() == 'false':
             pass
         elif str(ZURG).lower() == 'true':
+            download.version_check()
             zurg.setup()
             try:
                 if RDAPIKEY or ADAPIKEY:

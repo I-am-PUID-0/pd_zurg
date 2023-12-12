@@ -10,7 +10,7 @@ def setup():
     zurg_config_base = '/zurg/config.yml'
 
     def update_token(file_path, token):
-        logger.info(f"Updating token in config file: {file_path}")
+        logger.debug(f"Updating token in config file: {file_path}")
         with open(file_path, 'r') as file:
             lines = file.readlines()
         with open(file_path, 'w') as file:
@@ -21,7 +21,7 @@ def setup():
                     file.write(line)
 
     def update_port(file_path, port):
-        logger.info(f"Updating port in config file: {file_path} to {port}")
+        logger.debug(f"Updating port in config file: {file_path} to {port}")
         with open(file_path, 'r') as file:
             lines = file.readlines()
         with open(file_path, 'w') as file:
@@ -40,38 +40,28 @@ def setup():
             logger.info(f"Copying Zurg app from override: {zurg_app_override} to {zurg_executable_path}")
             shutil.copy(zurg_app_override, zurg_executable_path)
         else:
-            logger.info(f"Copying Zurg app from base: {zurg_app_base} to {zurg_executable_path}")
+            logger.debug(f"Copying Zurg app from base: {zurg_app_base} to {zurg_executable_path}")
             shutil.copy(zurg_app_base, zurg_executable_path)
         if os.path.exists(zurg_config_override):
-            logger.info(f"Copying Zurg config from override: {zurg_config_override} to {config_file_path}")
+            logger.debug(f"Copying Zurg config from override: {zurg_config_override} to {config_file_path}")
             shutil.copy(zurg_config_override, config_file_path)
         else:
-            logger.info(f"Copying Zurg config from base: {zurg_config_base} to {config_file_path}")
+            logger.debug(f"Copying Zurg config from base: {zurg_config_base} to {config_file_path}")
             shutil.copy(zurg_config_base, config_file_path)
         port = random.randint(9001, 9999)
-        logger.info(f"Selected port {port} for {key_type}")
+        logger.debug(f"Selected port {port} for {key_type}")
         update_token(config_file_path, token)
         update_port(config_file_path, port)
         os.environ[f'ZURG_PORT_{key_type}'] = str(port)
         logger.info(f"{key_type} Zurg instance running on port: {port}")
         logger.info(f"Starting subprocess for {key_type} Zurg instance")
 
-        def log_subprocess_output(pipe):
-            try:
-                for line in iter(pipe.readline, ''):
-                    logger.info(f"{key_type} Zurg subprocess: {line.strip()}")
-            except ValueError as e:
-                logger.error(f"Error reading subprocess output for {key_type}: {e}")
-
         try:
             process = subprocess.Popen([zurg_executable_path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=config_dir, universal_newlines=True, bufsize=1)
-            log_thread = threading.Thread(target=log_subprocess_output, args=(process.stdout,))
-            log_thread.daemon = True
-            log_thread.start()
-
+            subprocess_logger = SubprocessLogger(logger, "Zurg " + key_type)
+            subprocess_logger.start(process)
         except Exception as e:
             logger.error(f"Error running subprocess for {key_type}: {e}")
-
 
     try:
         if not RDAPIKEY and not ADAPIKEY:
@@ -80,15 +70,15 @@ def setup():
 
         if RDAPIKEY:
             rd_dir = '/zurg/RD/'
-            logger.info(f"Setting up RD instance in directory: {rd_dir}")
+            logger.info(f"Setting up RealDebrid instance in directory: {rd_dir}")
             os.makedirs(rd_dir, exist_ok=True)
-            run_zurg_instance(rd_dir, RDAPIKEY, "RDAPIKEY")
+            run_zurg_instance(rd_dir, RDAPIKEY, "RealDebrid")
 
         if ADAPIKEY:
             ad_dir = '/zurg/AD/'
-            logger.info(f"Setting up AD instance in directory: {ad_dir}")
+            logger.info(f"Setting up AllDebrid instance in directory: {ad_dir}")
             os.makedirs(ad_dir, exist_ok=True)
-            run_zurg_instance(ad_dir, ADAPIKEY, "ADAPIKEY")
+            run_zurg_instance(ad_dir, ADAPIKEY, "AllDebrid")
 
         logger.info("Zurg setup process complete")
 

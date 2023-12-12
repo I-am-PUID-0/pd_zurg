@@ -110,7 +110,7 @@ variables can be passed via the `-e` parameter (one for each variable), or via t
 of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 
 | Variable       | Description                                  | Default | Required for rclone| Required for plex_debrid| Required for zurg|
-|----------------|----------------------------------------------|---------|:-:|:-:|
+|----------------|----------------------------------------------|---------|:-:|:-:|:-:|
 |`TZ`| [TimeZone](http://en.wikipedia.org/wiki/List_of_tz_database_time_zones) used by the container | ` ` |
 |`RD_API_KEY`| [RealDebrid API key](https://real-debrid.com/apitoken) | ` ` | | :heavy_check_mark:| :heavy_check_mark:|
 |`AD_API_KEY`| [AllDebrid API key](https://alldebrid.com/apikeys/) | ` ` | | :heavy_check_mark:| :heavy_check_mark:|

@@ -50,7 +50,7 @@ services:
       - ZURG_ENABLED=true      
       - RD_API_KEY=
       ## Zurg Optional Settings
-     # - LOG_LEVEL=INFO
+     # - ZURG_LOG_LEVEL=DEBUG
      # - ZURG_VERSION=v0.9.2-hotfix.4
      # - ZURG_UPDATE=true
       ## Rclone Required Settings
@@ -78,7 +78,7 @@ services:
       ## Special Features
      # - DUPLICATE_CLEANUP=true
      # - CLEANUP_INTERVAL=1
-     # - PDZURG_LOG_LEVEL=INFO
+     # - PDZURG_LOG_LEVEL=DEBUG
      # - PDZURG_LOG_COUNT=2
     # Example to attach to gluetun vpn container if realdebrid blocks IP address 
     # network_mode: container:gluetun  
@@ -140,7 +140,7 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 |`ZURG_ENABLED`| Set the value "true" to enable the Zurg process | `false ` | | | :heavy_check_mark:|
 |`ZURG_VERSION`| The version of Zurg to use. If enabled, the value should contain v0.9.x or v0.9.x-hotfix.x format | `latest` | | | |
 |`ZURG_UPDATE`| Set the value "true" to enable automatic updates of Zurg | `false` | | | |
-|`LOG_LEVEL`| Set the log level for Zurg | `INFO` | | | |
+|`ZURG_LOG_LEVEL`| Set the log level for Zurg | `INFO` | | | |
 
 ## Data Volumes
 

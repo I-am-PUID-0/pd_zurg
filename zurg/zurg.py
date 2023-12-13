@@ -8,7 +8,17 @@ def setup():
     zurg_app_base = '/zurg/zurg'
     zurg_config_override = '/config/config.yml'
     zurg_config_base = '/zurg/config.yml'
+    
+    try:
+        if ZURGLOGLEVEL is not None:
+            os.environ['LOG_LEVEL'] = ZURGLOGLEVEL
+            logger.debug(f"'LOG_LEVEL' set to '{ZURGLOGLEVEL}' based on 'ZURG_LOG_LEVEL'")
+        else:
+            logger.warning("'ZURG_LOG_LEVEL' not set. Default 'LOG_LEVEL' will be used.")
 
+    except Exception as e:
+        logger.error(f"Error setting 'LOG_LEVEL' from 'ZURG_LOG_LEVEL': {e}")
+        
     def update_token(file_path, token):
         logger.debug(f"Updating token in config file: {file_path}")
         with open(file_path, 'r') as file:

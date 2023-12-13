@@ -32,52 +32,56 @@ services:
     stdin_open: true # docker run -i
     tty: true        # docker run -t    
     volumes:
-      # Location of configuration files. If a Zurg config.yml and/or Zurg app is placed here, it will be used to override the default configuration and/or app used at startup 
+      ## Location of configuration files. If a Zurg config.yml and/or Zurg app is placed here, it will be used to override the default configuration and/or app used at startup 
       - /pd_zurg/config:/config
-      # Location for logs
+      ## Location for logs
       - /pd_zurg/log:/log
-      # Location for rclone cache if enabled
+      ## Location for rclone cache if enabled
       - /pd_zurg/cache:/cache
-      # Location for Zurg RealDebrid active configuration
+      ## Location for Zurg RealDebrid active configuration
       - /pd_zurg/RD:/zurg/RD
-      # Location for Zurg AllDebrid active configuration -- when supported by Zurg     
+      ## Location for Zurg AllDebrid active configuration -- when supported by Zurg     
       - /pd_zurg/AD:/zurg/AD   
-      # Location for rclone mount to host
+      ## Location for rclone mount to host
       - /pd_zurg/mnt:/data:shared       
     environment:
       - TZ=
-      # Zurg Required Settings
+      ## Zurg Required Settings
       - ZURG_ENABLED=true      
       - RD_API_KEY=
-      # Rclone Required Settings
+      ## Zurg Optional Settings
+     # - LOG_LEVEL=INFO
+     # - ZURG_VERSION=v0.9.2-hotfix.4
+     # - ZURG_UPDATE=true
+      ## Rclone Required Settings
       - RCLONE_MOUNT_NAME=pd_zurg
-      # Rclone Optional Settings - See rclone docs for full list
-      - RCLONE_LOG_LEVEL=INFO
-      - RCLONE_CACHE_DIR=/cache
-      - RCLONE_DIR_CACHE_TIME=10s
-      - RCLONE_VFS_CACHE_MODE=full
-      - RCLONE_VFS_CACHE_MAX_SIZE=100G
-      - RCLONE_ATTR_TIMEOUT=8700h
-      - RCLONE_BUFFER_SIZE=32M
-      - RCLONE_VFS_CACHE_MAX_AGE=4h
-      - RCLONE_VFS_READ_CHUNK_SIZE=32M
-      - RCLONE_VFS_READ_CHUNK_SIZE_LIMIT=1G
-      - RCLONE_TRANSFERS=8
-      # Plex Debrid Required Settings
+      ## Rclone Optional Settings - See rclone docs for full list
+     #  - RCLONE_LOG_LEVEL=INFO
+     # - RCLONE_CACHE_DIR=/cache
+     # - RCLONE_DIR_CACHE_TIME=10s
+     # - RCLONE_VFS_CACHE_MODE=full
+     # - RCLONE_VFS_CACHE_MAX_SIZE=100G
+     # - RCLONE_ATTR_TIMEOUT=8700h
+     # - RCLONE_BUFFER_SIZE=32M
+     # - RCLONE_VFS_CACHE_MAX_AGE=4h
+     # - RCLONE_VFS_READ_CHUNK_SIZE=32M
+     # - RCLONE_VFS_READ_CHUNK_SIZE_LIMIT=1G
+     # - RCLONE_TRANSFERS=8
+      ## Plex Debrid Required Settings
       - PLEX_USER=
       - PLEX_TOKEN=
       - PLEX_ADDRESS=
-      # Plex Debrid Optional Settings
-      - AUTO_UPDATE=true
-      - AUTO_UPDATE_INTERVAL=12
-      - SHOW_MENU=true
-      # Special Features
-      - DUPLICATE_CLEANUP=true
-      - CLEANUP_INTERVAL=1
-      - PDZURG_LOG_LEVEL=INFO
-      - PDZURG_LOG_COUNT=2
-    # attach to gluetun vpn container if realdebrid blocks IP address 
-    network_mode: container:gluetun  
+      ## Plex Debrid Optional Settings
+     # - AUTO_UPDATE=true
+     # - AUTO_UPDATE_INTERVAL=12
+     # - SHOW_MENU=false
+      ## Special Features
+     # - DUPLICATE_CLEANUP=true
+     # - CLEANUP_INTERVAL=1
+     # - PDZURG_LOG_LEVEL=INFO
+     # - PDZURG_LOG_COUNT=2
+    # Example to attach to gluetun vpn container if realdebrid blocks IP address 
+    # network_mode: container:gluetun  
     devices:
       - /dev/fuse:/dev/fuse:rwm
     cap_add:

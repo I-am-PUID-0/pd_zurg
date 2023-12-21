@@ -5,15 +5,17 @@ A combined docker image for the unified deployment of **[itsToggle's](https://gi
 
 
 ## Features
- - [Optional independent or combined utilization of zurg/rclone and plex_debrid](https://github.com/I-am-PUID-0/pd_zurg/wiki#optional-independent-or-combined-utilization-of-rclone-and-plex_debrid)
+ - [Optional independent or combined utilization of plex_debrid and zurg w/ rclone](https://github.com/I-am-PUID-0/pd_zurg/wiki#optional-independent-or-combined-utilization-of--plex_debrid-and-zurg-w-rclone)
  - [Simultaneous independent rclone mounts](https://github.com/I-am-PUID-0/pd_zurg/wiki#simultaneous-independent-rclone-mounts)
  - [Bind-mounts rclone to the host](https://github.com/I-am-PUID-0/pd_zurg/wiki#bind-mounts-rclone-to-the-host)
- - [Debrid service API Key passed to zurg and plex_debrid via docker environment variable](https://github.com/I-am-PUID-0/pd_zurg/wiki#debrid-api-key-passed-to-rclone-and-plex_debrid-via-docker-environment-variable)
+ - [Debrid service API Key passed to zurg and plex_debrid via docker environment variable](https://github.com/I-am-PUID-0/pd_zurg/wiki#debrid-api-key-passed-to-zurg-and-plex_debrid-via-docker-environment-variable)
  - [rclone config automatically generated](https://github.com/I-am-PUID-0/pd_zurg/wiki#rclone-config-automatically-generated)
  - [rclone flags passed via docker environment variable](https://github.com/I-am-PUID-0/pd_zurg/wiki#rclone-flags-passed-via-docker-environment-variable)
  - [Fuse.conf ```user_allow_other``` applied within the container vs. the host](https://github.com/I-am-PUID-0/pd_zurg/wiki#fuseconf-user_allow_other-applied-within-the-container-vs-the-host)
  - [Plex server values passed to plex_debrid settings.json via docker environment variables](https://github.com/I-am-PUID-0/pd_zurg/wiki#plex-server-values-passed-to-plex_debrid-settingsjson-via-docker-environment-variables)
  - [Automatic Update of plex_debrid to the latest version](https://github.com/I-am-PUID-0/pd_zurg/wiki#automatic-update-of-plex_debrid-to-the-latest-version)
+ - [Automatic Update of Zurg to the latest version](https://github.com/I-am-PUID-0/pd_zurg/wiki#automatic-update-of-zurg-to-the-latest-version)
+ - [Version selection of zurg to the user-defined version](https://github.com/I-am-PUID-0/pd_zurg/wiki#version-selection-of-zurg-to-the-user-defined-version)
  - [Use of .env file for setting environment variables](https://github.com/I-am-PUID-0/pd_zurg/wiki#use-of-env-file-for-setting-environment-variables)
  - [Duplicate Cleanup](https://github.com/I-am-PUID-0/pd_zurg/wiki#duplicate-cleanup) 
 
@@ -56,7 +58,7 @@ services:
       ## Rclone Required Settings
       - RCLONE_MOUNT_NAME=pd_zurg
       ## Rclone Optional Settings - See rclone docs for full list
-     #  - RCLONE_LOG_LEVEL=INFO
+     # - RCLONE_LOG_LEVEL=DEBUG
      # - RCLONE_CACHE_DIR=/cache
      # - RCLONE_DIR_CACHE_TIME=10s
      # - RCLONE_VFS_CACHE_MODE=full
@@ -72,10 +74,10 @@ services:
       - PLEX_TOKEN=
       - PLEX_ADDRESS=
       ## Plex Debrid Optional Settings
-     # - AUTO_UPDATE=true
-     # - AUTO_UPDATE_INTERVAL=12
+     # - PD_UPDATE=true   
      # - SHOW_MENU=false
       ## Special Features
+     # - AUTO_UPDATE_INTERVAL=12
      # - DUPLICATE_CLEANUP=true
      # - CLEANUP_INTERVAL=1
      # - PDZURG_LOG_LEVEL=DEBUG
@@ -101,11 +103,11 @@ docker build -t yourimagename https://github.com/I-am-PUID-0/pd_zurg.git
 
 
 ## Automatic Updates
-If you would like to enable automatic updates for plex_debrid, utilize the ```AUTO_UPDATE``` environment variable. 
-Additional details can be found in the [pd_zurg Wiki](https://github.com/I-am-PUID-0/pd_zurg/wiki/Settings#automatic-updates)
+If you would like to enable automatic updates for plex_debrid, utilize the ```PD_UPDATE``` environment variable. 
+Additional details can be found in the [pd_zurg Wiki](https://github.com/I-am-PUID-0/pd_zurg/wiki#automatic-update-of-plex_debrid-to-the-latest-version)
 
 If you would like to enable automatic updates for Zurg, utilize the ```ZURG_UPDATE``` environment variable. 
-Additional details can be found in the [pd_zurg Wiki](https://github.com/I-am-PUID-0/pd_zurg/wiki/Settings#automatic-updates)
+Additional details can be found in the [pd_zurg Wiki](https://github.com/I-am-PUID-0/pd_zurg/wiki#automatic-update-of-zurg-to-the-latest-version)
 
 ## Environment Variables
 
@@ -131,7 +133,7 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 |`PLEX_ADDRESS`| The URL of your Plex server. Example: http://192.168.0.100:32400 or http://plex:32400 - format must include ```http://``` or ```https://``` and have no trailing characters after the port number (32400). E.g., ```/``` | ` ` || :heavy_check_mark:|
 |`SHOW_MENU`| Enable the plex_debrid menu to show upon startup, requiring user interaction before the program runs. Conversely, if the plex_debrid menu is disabled, the program will automatically run upon successful startup. If used, the value must be ```true``` or ```false``` | `true` |
 |`PD_LOGFILE`| Log file for plex_debrid. The log file will appear in the ```/config``` as ```plex_debrid.log```. If used, the value must be ```true``` or ```false``` | `false` |
-|`AUTO_UPDATE`| Enable automatic updates of plex_debrid. Adding this variable will enable automatic updates to the latest version of plex_debrid locally within the container. No values are required. | `false` |
+|`PD_UPDATE`| Enable automatic updates of plex_debrid. Adding this variable will enable automatic updates to the latest version of plex_debrid locally within the container. | `false` |
 |`AUTO_UPDATE_INTERVAL`| Interval between automatic update checks in hours. Vaules can be any positive [whole](https://www.oxfordlearnersdictionaries.com/us/definition/english/whole-number) or [decimal](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095705740;jsessionid=3FDC96CC0D79CCE69702661D025B9E9B#:~:text=The%20separator%20used%20between%20the,number%20expressed%20in%20decimal%20representation.) point based number. Ex. a value of .5 would yield thirty minutes and 1.5 would yield one and a half hours | `24` |
 |`DUPLICATE_CLEANUP`| Automated cleanup of duplicate content in Plex.  | `false` |
 |`CLEANUP_INTERVAL`| Interval between duplicate cleanup in hours. Vaules can be any positive [whole](https://www.oxfordlearnersdictionaries.com/us/definition/english/whole-number) or [decimal](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095705740;jsessionid=3FDC96CC0D79CCE69702661D025B9E9B#:~:text=The%20separator%20used%20between%20the,number%20expressed%20in%20decimal%20representation.) point based number. Ex. a value of .5 would yield thirty minutes and 1.5 would yield one and a half hours | `24` |
@@ -139,7 +141,7 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 |`PDZURG_LOG_COUNT`| The number logs to retain. Result will be value + current log  | `2` |
 |`ZURG_ENABLED`| Set the value "true" to enable the Zurg process | `false ` | | | :heavy_check_mark:|
 |`ZURG_VERSION`| The version of Zurg to use. If enabled, the value should contain v0.9.x or v0.9.x-hotfix.x format | `latest` | | | |
-|`ZURG_UPDATE`| Set the value "true" to enable automatic updates of Zurg | `false` | | | |
+|`ZURG_UPDATE`| Enable automatic updates of Zurg. Adding this variable will enable automatic updates to the latest version of Zurg locally within the container. | `false` | | | |
 |`ZURG_LOG_LEVEL`| Set the log level for Zurg | `INFO` | | | |
 
 ## Data Volumes
@@ -158,11 +160,11 @@ format: `<HOST_DIR>:<CONTAINER_DIR>[:PERMISSIONS]`.
 
 ## TODO
 
-See the [pd_zurg roadmap](https://github.com/users/I-am-PUID-0/projects/2) for a list of planned features and enhancements.
+See the [pd_zurg roadmap](https://github.com/users/I-am-PUID-0/projects/4) for a list of planned features and enhancements.
 
 ## Deployment
 
-pd_zurg allows for the simultaneous or individual deployment of plex_debrid and/or rclone
+pd_zurg allows for the simultaneous or individual deployment of plex_debrid and/or Zurg w/ rclone
 
 For additional details on deployment, see the [pd_zurg Wiki](https://github.com/I-am-PUID-0/pd_zurg/wiki/Settings#deployment)
 ## Community

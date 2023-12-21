@@ -44,9 +44,11 @@ def pd_setup():
             f.seek(0)
             dump(json_data, f, indent=4)
             f.truncate()
-        logger.info("plex_debrid configuration complete")
-        logger.info("Starting plex_debrid")            
+        logger.info("plex_debrid configuration complete")         
     except Exception as e:
         logger.error("An error occurred while configuring plex_debrid. Exiting...")
         logger.error(str(e))
         raise
+    
+if __name__ == "__main__":
+    pd_setup()    

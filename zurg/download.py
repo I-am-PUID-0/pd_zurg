@@ -1,5 +1,6 @@
 from base import *
 
+
 logger = get_logger()
 
 class CustomVersion:
@@ -62,7 +63,7 @@ def get_latest_release(repo_owner, repo_name):
         logger.info("Zurg latest release: %s", latest_version)
         return str(latest_version), None
     except Exception as e:
-        logger.error(f"Error fetching latest release: {e}")
+        logger.error(f"Error fetching latest Zurg release: {e}")
         return None, str(e)
 
 def get_architecture():
@@ -104,6 +105,7 @@ def download_and_unzip_release(base_url, release_version, architecture):
             extracted_file_path = os.path.join('zurg', 'zurg')
             os.chmod(extracted_file_path, 0o755)
             logger.debug("Set 'zurg' file as executable.")
+            os.environ['ZURG_CURRENT_VERSION'] = release_version 
         else:
             logger.error("Unable to download the file. Status code: %s", response.status_code)
             return False
@@ -115,10 +117,12 @@ def download_and_unzip_release(base_url, release_version, architecture):
 def version_check():
     try:
         architecture = get_architecture()
+        os.environ['CURRENT_ARCHITECTURE'] = architecture
         repo_owner = 'debridmediamanager'
         repo_name = 'zurg-testing'
         base_url = 'https://github.com/debridmediamanager/zurg-testing/raw/main/releases'
-
+        os.environ['BASE_URL'] = base_url
+        
         if ZURGVERSION:
             release_version = ZURGVERSION if ZURGVERSION.startswith('v') else 'v' + ZURGVERSION
             logger.info("Using release version from environment variable: %s", release_version)
@@ -126,7 +130,7 @@ def version_check():
             release_version, error = get_latest_release(repo_owner, repo_name)
             if error:
                 logger.error(error)
-                raise Exception("Failed to get the latest release version.")       
+                raise Exception("Failed to get the latest release version.")
 
         if not download_and_unzip_release(base_url, release_version, architecture):
             raise Exception("Failed to download and extract the release.")

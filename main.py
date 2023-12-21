@@ -1,14 +1,15 @@
 from base import *
-from plex_debrid_ import update, setup 
+import plex_debrid_ as p
+import zurg as z 
 from rclone_rd import rclone
 from cleanup import duplicate_cleanup
-from zurg import zurg, download
+from update import auto_update
 
 
 def main():
     logger = get_logger()
 
-    version = '0.2.0'
+    version = '1.0.0'
 
     ascii_art = f'''
                                                                           
@@ -44,19 +45,29 @@ def main():
         if ZURG is None or str(ZURG).lower() == 'false':
             pass
         elif str(ZURG).lower() == 'true':
-            download.version_check()
-            zurg.setup()
             try:
                 if RDAPIKEY or ADAPIKEY:
-                    if RCLONEMN:
-                        try:
-                            if not DUPECLEAN:
-                                pass
-                            elif DUPECLEAN:
-                                duplicate_cleanup.duplicate_cleanup()
-                        except Exception as e:
-                            logger.error(e)                         
-                        rclone.setup()                       
+                    try:
+                        z.setup.zurg_setup() 
+                        z_updater = z.update.ZurgUpdate()
+                        if ZURGUPDATE:
+                            z_updater.auto_update('Zurg',True)
+                        else:
+                            z_updater.auto_update('Zurg',False)
+                    except Exception as e:
+                        logger.error(f"Error in Zurg setup: {e}")
+                    try:    
+                        if RCLONEMN:
+                            try:
+                                if not DUPECLEAN:
+                                    pass
+                                elif DUPECLEAN:
+                                    duplicate_cleanup.setup()
+                                rclone.setup()      
+                            except Exception as e:
+                                logger.error(e)                         
+                    except Exception as e:
+                        logger.error(f"Error in setup: {e}")                          
                 else:
                     raise MissingAPIKeyException()
             except Exception as e:
@@ -66,13 +77,20 @@ def main():
         
     try:
         if PLEXUSER:
-            setup.pd_setup()
-            if AUTOUPDATE:
-                update.auto_update()
-            else:
-                update.update_disabled()
+            try:
+                p.setup.pd_setup()
+                pd_updater = p.update.PlexDebridUpdate()
+                if PDUPDATE:
+                    pd_updater.auto_update('plex_debrid',True)
+                else:
+                    pd_updater.auto_update('plex_debrid',False)
+            except Exception as e:
+                logger.error(f"Error in Plex Debrid setup: {e}")
     except:
         pass
-
+    def perpetual_wait():
+        stop_event = threading.Event()
+        stop_event.wait()
+    perpetual_wait()    
 if __name__ == "__main__":
     main()

@@ -1,13 +1,18 @@
 from base import *
 
+def check_processes(process_info):
+    found_processes = {key: False for key in process_info.keys()}
 
-def check_plex_debrid():
-    try:
-        process = "python ./plex_debrid/main.py --config-dir /config"
-        subprocess.check_output(f"pgrep -f '{process}'", shell=True)
-        return True
-    except subprocess.CalledProcessError:
-        return False
+    for proc in psutil.process_iter():
+        try:
+            cmdline = ' '.join(proc.cmdline())
+            for process_name, info in process_info.items():
+                if info['regex'].search(cmdline):
+                    found_processes[process_name] = True
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+
+    return found_processes
 
 try:
     error_messages = []
@@ -18,22 +23,43 @@ try:
     else:
         RCLONEMN_RD = RCLONEMN_AD = RCLONEMN
 
-    if ZURG and RDAPIKEY and RCLONEMN:
-        DIR = f'/data/{RCLONEMN_RD}/movies'
-        if not os.path.isdir(DIR):
-            error_messages.append("The RealDebrid rclone mount is not accessible")
+    process_info = {
+        "zurg_rd": {
+            "regex": re.compile(rf'/zurg/RD/zurg.*--preload', re.IGNORECASE),
+            "error_message": "The Zurg RD process is not running.",
+            "should_run": ZURG and RDAPIKEY
+        },
+        "zurg_ad": {
+            "regex": re.compile(rf'/zurg/AD/zurg.*--preload', re.IGNORECASE),
+            "error_message": "The Zurg AD process is not running.",
+            "should_run": ZURG and ADAPIKEY
+        },
+        "plex_debrid": {
+            "regex": re.compile(r'python ./plex_debrid/main.py --config-dir /config'),
+            "error_message": "The plex_debrid process is not running.",
+            "should_run": bool(os.getenv("PLEX_USER"))
+        },
+        "rclonemn_rd": {
+            "regex": re.compile(rf'rclone mount {re.escape(RCLONEMN_RD)}:'),
+            "error_message": f"The Rclone RD process for {RCLONEMN_RD} is not running.",
+            "should_run": ZURG and RDAPIKEY
+        },
+        "rclonemn_ad": {
+            "regex": re.compile(rf'rclone mount {re.escape(RCLONEMN_AD)}:'),
+            "error_message": f"The Rclone AD process for {RCLONEMN_AD} is not running.",
+            "should_run": ZURG and ADAPIKEY
+        }
+    }
 
-    if ZURG and ADAPIKEY and RCLONEMN:
-        DIR = f'/data/{RCLONEMN_AD}/movies'
-        if not os.path.isdir(DIR):
-            error_messages.append("The AllDebrid rclone mount is not accessible")
+    process_status = check_processes(process_info)
 
-    if os.getenv("PLEX_USER"):
-        if not check_plex_debrid():
-            error_messages.append("The plex_debrid process is not running.")
+    for process_name, info in process_info.items():
+        if info["should_run"] and not process_status[process_name]:
+            error_messages.append(info["error_message"])
 
     if error_messages:
-        raise Exception(" | ".join(error_messages))
+        error_message_combined = " | ".join(error_messages)
+        raise Exception(error_message_combined)
 
 except Exception as e:
     print(str(e), file=sys.stderr)

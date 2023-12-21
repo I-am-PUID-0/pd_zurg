@@ -142,7 +142,7 @@ def process_movies():
     except Exception as e:
         logger.error(f"Error occurred while processing movie library section: {str(e)}")
 
-def duplicate_cleanup():
+def setup():
     try:
         env_variables = ["PLEX_ADDRESS", "PLEX_TOKEN", "RCLONE_MOUNT_NAME"]
         logger.info("Checking required duplicate cleanup environment variables.")

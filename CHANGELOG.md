@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Version [1.0.0] - 2023-12-21
+
+### Changed
+
+- Automatic Updates: Breaking Change: AUTO_UPDATE env var renamed to PD_UPDATE
+- Automatic Updates: Refactored update process to allow for scaling of update process
+- Healthcheck: Refactored healthcheck process to allow for scaling of healthcheck process
+- Healthcheck: rclone mount check now uses rclone process instead of rclone mount location
+- Rclone: Subprocess logs are now captured and logged to the pd_zurg logs
+
+### Added
+
+- ZURG_UPDATE: ZURG_UPDATE env var added to enable automatic update process for ZURG
+- Zurg: Added automatic update process for Zurg
+- Healthcheck: Added healthcheck for Zurg process
+
+
 ## Version [0.2.0] - 2023-12-13
 
 ### Added
@@ -21,7 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- zurg: container pulls latest or user-defined version of ZURG from github upon startup
+- Zurg: container pulls latest or user-defined version of ZURG from github upon startup
 
 
 ## Version [0.0.5] - 2023-12-06
@@ -42,7 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- zurg: fix config.yml override
+- Zurg: fix config.yml override
 
 
 ## Version [0.0.2] - 2023-12-05

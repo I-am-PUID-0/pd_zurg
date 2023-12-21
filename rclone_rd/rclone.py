@@ -58,22 +58,45 @@ def setup():
         if ADAPIKEY:
             mount_names.append(RCLONEMN_AD)
 
+        def parse_log_level_and_message(line):
+            match = re.search(r"\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2} (\bDEBUG\b|\bINFO\b|\bERROR\b|\bWARNING\b) : (.+)$", line)
+            if match:
+                log_level = match.group(1).upper()
+                message = match.group(2)
+                return log_level, message
+            return None, line 
+
+        def monitor_stderr(process, mount_name):
+            for line in process.stderr:
+                line = line.decode().strip()
+                if line:
+                    log_level, message = parse_log_level_and_message(line)
+                    if log_level == 'DEBUG':
+                        logger.debug(f"rclone mount name {mount_name}: {message}")
+                    elif log_level == 'INFO':
+                        logger.info(f"rclone mount name {mount_name}: {message}")
+                    elif log_level == 'WARNING':
+                        logger.warning(f"{mount_name}: {message}")
+                    elif log_level == 'ERROR':
+                        logger.error(f"rclone mount name {mount_name}: {message}")
+                    else:
+                        logger.info(f"rclone mount name {mount_name}: {line}")
+
+        subprocesses = []
+
         for idx, mn in enumerate(mount_names):
             logger.info(f"Configuring rclone for {mn}")
             subprocess.run(["umount", f"/data/{mn}"], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             os.makedirs(f"/data/{mn}", exist_ok=True)
-            
-            if not PLEXUSER:
-                if idx != len(mount_names) - 1:  
-                    logger.info(f"Starting rclone daemon for {mn}")
-                    subprocess.run(["rclone", "mount", f"{mn}:", f"/data/{mn}", "--config", "/config/rclone.config", "--allow-other", "--poll-interval=0", "--daemon"])
-                else:  
-                    logger.info(f"Starting rclone for {mn}")
-                    subprocess.run(["rclone", "mount", f"{mn}:", f"/data/{mn}", "--config", "/config/rclone.config", "--allow-other", "--poll-interval=0"])
-            else:
-                logger.info(f"Starting rclone daemon for {mn}")
-                subprocess.run(["rclone", "mount", f"{mn}:", f"/data/{mn}", "--config", "/config/rclone.config", "--allow-other", "--poll-interval=0", "--daemon"])
-                
+    
+            rclone_command = ["rclone", "mount", f"{mn}:", f"/data/{mn}", "--config", "/config/rclone.config", "--allow-other", "--poll-interval=0"]
+            if not PLEXUSER or idx != len(mount_names) - 1:
+                rclone_command.append("--daemon")
+    
+            logger.info(f"Starting rclone {'daemon' if '--daemon' in rclone_command else ''} for {mn}")
+            process = subprocess.Popen(rclone_command, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+            threading.Thread(target=monitor_stderr, args=(process, mn)).start()
+
         logger.info("rclone startup complete")
 
     except Exception as e:

@@ -15,7 +15,7 @@ class PlexDebridUpdate(BaseUpdate):
             self.logger.info(f"Currently installed [v{version}]")
 
         try:
-            response = requests.get('https://raw.githubusercontent.com/itsToggle/plex_debrid/main/ui/ui_settings.py', timeout=0.25)
+            response = requests.get('https://raw.githubusercontent.com/itsToggle/plex_debrid/main/ui/ui_settings.py', timeout=5)
             response = response.content.decode('utf8')
 
             if regex.search("(?<=')([0-9]+\.[0-9]+)(?=')", response):

@@ -19,7 +19,7 @@ class BaseUpdate:
             self.logger.error(f"Error running subprocess for {process_name} {key_type}: {e}")             
 
     def update_schedule(self):
-        self.update_check()
+        self.update_check()      
         interval_minutes = int(self.auto_update_interval() * 60)
         schedule.every(interval_minutes).minutes.do(self.update_check)
 

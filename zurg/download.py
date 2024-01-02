@@ -8,14 +8,21 @@ class CustomVersion:
         self.main_version = main_version
         self.hotfix = hotfix
         self.subversion = subversion
+
     def __lt__(self, other):
         if self.main_version != other.main_version:
             return self.main_version < other.main_version
         if self.hotfix != other.hotfix:
             return self.hotfix < other.hotfix
+        if not self.subversion and other.subversion:
+            return True
+        if self.subversion and not other.subversion:
+            return False
         return self.subversion < other.subversion
+
     def __eq__(self, other):
         return (self.main_version, self.hotfix, self.subversion) == (other.main_version, other.hotfix, other.subversion)
+
     def __str__(self):
         version_str = f'v{self.main_version}'
         if self.hotfix > 0:
@@ -27,14 +34,14 @@ class CustomVersion:
 def parse_custom_version(version_str):
     try:
         main_version_part, *hotfix_part = version_str.lstrip('v').split('-hotfix.')
-        main_version = parse_version(main_version_part)       
+        main_version = parse_version(main_version_part)
+        hotfix_number = 0
+        subversion = ''
         if hotfix_part:
-            hotfix_number, *subversion = hotfix_part[0].split('-')
-            hotfix_number = int(hotfix_number) if hotfix_number.isdigit() else 0
-            subversion = subversion[0] if subversion else ''
-        else:
-            hotfix_number = 0
-            subversion = ''
+            hotfix_and_subversion = hotfix_part[0].split('-', 1)
+            hotfix_number = int(hotfix_and_subversion[0]) if hotfix_and_subversion[0].isdigit() else 0
+            if len(hotfix_and_subversion) > 1:
+                subversion = hotfix_and_subversion[1]
         return CustomVersion(main_version, hotfix_number, subversion)
     except Exception as e:
         logger.error(f"Error parsing version string '{version_str}': {e}")

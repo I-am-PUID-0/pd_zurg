@@ -19,7 +19,7 @@ def setup():
     try:
         if not RCLONEMN:
             raise Exception("Please set a name for the rclone mount")
-        logger.info(f"Configuring the rclone mount name to {RCLONEMN}")
+        logger.info(f"Configuring the rclone mount name to \"{RCLONEMN}\"")
 
         if not RDAPIKEY and not ADAPIKEY:
             raise Exception("Please set the API Key for the rclone mount")
@@ -59,28 +59,40 @@ def setup():
             mount_names.append(RCLONEMN_AD)
 
         def parse_log_level_and_message(line):
-            match = re.search(r"\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2} (\bDEBUG\b|\bINFO\b|\bERROR\b|\bWARNING\b) : (.+)$", line)
-            if match:
-                log_level = match.group(1).upper()
-                message = match.group(2)
-                return log_level, message
-            return None, line 
+            log_levels = {'DEBUG', 'INFO', 'NOTICE', 'WARNING', 'ERROR'}
+            parts = line.split()
+            log_level = None
+            message_start_index = None
+
+            for i, part in enumerate(parts):
+                if part in log_levels or part.rstrip(':') in log_levels:
+                    log_level = part.rstrip(':')
+                    message_start_index = i + 2 
+                    break
+
+            if log_level and message_start_index and message_start_index < len(parts):
+                message = ' '.join(parts[message_start_index:])
+            else:
+                log_level = 'UNKNOWN'
+                message = line
+
+            return log_level, message
 
         def monitor_stderr(process, mount_name):
+            log_methods = {
+                'DEBUG': logger.debug,
+                'INFO': logger.info,
+                'NOTICE': logger.debug,
+                'WARNING': logger.warning,
+                'ERROR': logger.error
+            }
+
             for line in process.stderr:
                 line = line.decode().strip()
                 if line:
                     log_level, message = parse_log_level_and_message(line)
-                    if log_level == 'DEBUG':
-                        logger.debug(f"rclone mount name {mount_name}: {message}")
-                    elif log_level == 'INFO':
-                        logger.info(f"rclone mount name {mount_name}: {message}")
-                    elif log_level == 'WARNING':
-                        logger.warning(f"{mount_name}: {message}")
-                    elif log_level == 'ERROR':
-                        logger.error(f"rclone mount name {mount_name}: {message}")
-                    else:
-                        logger.info(f"rclone mount name {mount_name}: {line}")
+                    log_func = log_methods.get(log_level, logger.info)
+                    log_func(f"rclone mount name \"{mount_name}\": {message}")
 
         subprocesses = []
 
@@ -93,7 +105,7 @@ def setup():
             if not PLEXUSER or idx != len(mount_names) - 1:
                 rclone_command.append("--daemon")
     
-            logger.info(f"Starting rclone {'daemon' if '--daemon' in rclone_command else ''} for {mn}")
+            logger.info(f"Starting rclone{' daemon' if '--daemon' in rclone_command else ''} for {mn}")
             process = subprocess.Popen(rclone_command, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
             threading.Thread(target=monitor_stderr, args=(process, mn)).start()
 

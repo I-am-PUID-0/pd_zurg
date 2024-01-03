@@ -51,7 +51,7 @@ def get_latest_release(repo_owner, repo_name):
     try:
         logger.info("Fetching latest Zurg release.")
         api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/contents/releases"
-        response = requests.get(api_url)
+        response = requests.get(api_url, timeout=10)
         if response.status_code != 200:
             logger.error("Unable to access the repository API. Status code: %s", response.status_code)
             return None, "Error: Unable to access the repository API."
@@ -101,7 +101,7 @@ def get_architecture():
 def download_and_unzip_release(base_url, release_version, architecture):
     try:
         download_url = f"{base_url}/{release_version}/zurg-{release_version}-{architecture}.zip?download="
-        response = requests.get(download_url)
+        response = requests.get(download_url, timeout=10)
         logger.debug("Downloading from URL: %s", download_url)
         if response.status_code == 200:
             zip_file = zipfile.ZipFile(io.BytesIO(response.content))

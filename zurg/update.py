@@ -6,7 +6,7 @@ class ZurgUpdate(BaseUpdate):
     def terminate_zurg_instance(self, config_dir, key_type):
         regex_pattern = re.compile(rf'{re.escape(config_dir)}/zurg.*--preload', re.IGNORECASE)
         found_process = False
-        self.logger.debug(f"Attempting to terminate Zurg process for {key_type} in {config_dir}")
+        self.logger.debug(f"Attempting to terminate Zurg w/ {key_type} process")
 
         for proc in psutil.process_iter():
             try:
@@ -20,7 +20,7 @@ class ZurgUpdate(BaseUpdate):
                 pass
 
         if not found_process:
-            self.logger.debug(f"No matching Zurg process found for {key_type} in {config_dir}")
+            self.logger.debug(f"No matching Zurg w/ {key_type} processes found")
         
     def start_process(self, process_name, config_dir=None):
         directories_to_check = ["/zurg/RD", "/zurg/AD"]
@@ -46,20 +46,23 @@ class ZurgUpdate(BaseUpdate):
             latest_release, error = get_latest_release(repo_owner='debridmediamanager', repo_name='zurg-testing')
             
             if error:
-                self.logger.error(f"Failed to fetch the latest release: {error}")
+                self.logger.error(f"Failed to fetch the latest Zurg release: {error}")
                 return
             
-            self.logger.info(f"Current version: {current_version}")
-            self.logger.debug(f"Latest available version: {latest_release}")
+            self.logger.info(f"Zurg current version: {current_version}")
+            self.logger.debug(f"Zurg latest available version: {latest_release}")
             
             if current_version == latest_release:
                 self.logger.info("Zurg is already up to date.")
             else:
                 self.logger.info("A new version of Zurg is available. Applying updates.")
-                architecture = os.getenv('CURRENT_ARCHITECTURE')
+                from .download import get_architecture
+                architecture = get_architecture()
                 from .download import download_and_unzip_release
-                base_url = os.getenv('BASE_URL')
-                download_and_unzip_release(base_url, latest_release, architecture)
+                base_url = 'https://github.com/debridmediamanager/zurg-testing/raw/main/releases'
+                os.environ['BASE_URL'] = base_url
+                if not download_and_unzip_release(base_url, latest_release, architecture):
+                    raise Exception("Failed to download and extract the release.")                
                 directories_to_check = ["/zurg/RD", "/zurg/AD"]
                 zurg_presence = {dir_to_check: os.path.exists(os.path.join(dir_to_check, 'zurg')) for dir_to_check in directories_to_check}
 

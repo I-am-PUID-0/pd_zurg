@@ -8,15 +8,18 @@ class BaseUpdate:
 
     def start_process(self, process_name, config_dir, command, key_type):
         try:
-            self.logger.info(f"Starting {process_name} {key_type}")   
+            if key_type:
+                self.logger.info(f"Starting {process_name} w/ {key_type}")
+            else:    
+                self.logger.info(f"Starting {process_name}")   
             if process_name != "plex_debrid":
                 self.process = subprocess.Popen(command, stdout=subprocess.PIPE, start_new_session=True, stderr=subprocess.STDOUT, cwd=config_dir, universal_newlines=True, bufsize=1)
-                self.subprocess_logger = SubprocessLogger(self.logger, f"{process_name} " + key_type)
+                self.subprocess_logger = SubprocessLogger(self.logger, f"{process_name} w/ " + key_type)
                 self.subprocess_logger.start(self.process)
             else: 
                 self.process = subprocess.Popen(command, start_new_session=True)
         except Exception as e:
-            self.logger.error(f"Error running subprocess for {process_name} {key_type}: {e}")             
+            self.logger.error(f"Error running subprocess for {process_name} w/ {key_type}: {e}")             
 
     def update_schedule(self):
         self.update_check()      
@@ -36,8 +39,7 @@ class BaseUpdate:
     
     def auto_update(self, process_name, enable_update):
         if enable_update:
-            self.logger.info(f"Automatic update enabled for {process_name}")
-            self.logger.info("Automatic updates set to " + format_time(self.auto_update_interval()))            
+            self.logger.info(f"Automatic updates set to {format_time(self.auto_update_interval())} for {process_name}")            
             self.schedule_thread = threading.Thread(target=self.update_schedule)
             self.schedule_thread.start()
             self.start_process(process_name)

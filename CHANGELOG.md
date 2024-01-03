@@ -6,11 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Version [1.0.3] - 2024-01-03
+
+### Changed
+
+- Zurg: Increased read timeout to 10 seconds for GitHub repository checks
+- Zurg: Setup process now checks for existing config.yml in debrid service directory
+- Zurg: Setup process now checks for exisiting zurg app in debrid service directory
+- Logging: Cleaned up logging and added addtional logging details
+
 ## Version [1.0.2] - 2024-01-02
 
 ### Changed
 
-- Zurg: download release version parsing
+- Zurg: Download release version parsing
 
 
 ## Version [1.0.1] - 2023-12-21
@@ -52,37 +61,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Zurg: container pulls latest or user-defined version of ZURG from github upon startup
+- Zurg: Container pulls latest or user-defined version of ZURG from github upon startup
 
 
 ## Version [0.0.5] - 2023-12-06
 
 ### Fixed
 
-- Duplicate Cleanup: process not called correctly
+- Duplicate Cleanup: Process not called correctly
 
 
 ## Version [0.0.4] - 2023-12-06
 
 ### Changed
 
-- Dockerfile: pull latest config.yml from zurg repo for base file
+- Dockerfile: Pull latest config.yml from zurg repo for base file
 
 
 ## Version [0.0.3] - 2023-12-05
 
-### Changed
+### Fixed
 
-- Zurg: fix config.yml override
+- Zurg: config.yml override
 
 
 ## Version [0.0.2] - 2023-12-05
 
 ### Changed
 
-- base: update envs
-- main.py: order of execution
-- healthcheck.py: order of execution
+- base: Update envs
+- main.py: Order of execution
+- healthcheck.py: Order of execution
 
 
 ## Version [0.0.1] - 2023-12-05

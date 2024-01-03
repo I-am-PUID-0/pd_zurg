@@ -12,8 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Zurg: Increased read timeout to 10 seconds for GitHub repository checks
 - Zurg: Setup process now checks for existing config.yml in debrid service directory
-- Zurg: Setup process now checks for exisiting zurg app in debrid service directory
-- Logging: Cleaned up logging and added addtional logging details
+- Zurg: Setup process now checks for existing zurg app in debrid service directory
+- Logging: Cleaned up logging and added additional logging details
 
 ## Version [1.0.2] - 2024-01-02
 

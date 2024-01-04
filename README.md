@@ -17,6 +17,7 @@ A combined docker image for the unified deployment of **[itsToggle's](https://gi
  - [Automatic Update of Zurg to the latest version](https://github.com/I-am-PUID-0/pd_zurg/wiki#automatic-update-of-zurg-to-the-latest-version)
  - [Version selection of zurg to the user-defined version](https://github.com/I-am-PUID-0/pd_zurg/wiki#version-selection-of-zurg-to-the-user-defined-version)
  - [Use of .env file for setting environment variables](https://github.com/I-am-PUID-0/pd_zurg/wiki#use-of-env-file-for-setting-environment-variables)
+ - [Use of Docker Secret file for setting sensitive variables](https://github.com/I-am-PUID-0/pd_zurg_private#docker-secrets)
  - [Duplicate Cleanup](https://github.com/I-am-PUID-0/pd_zurg/wiki#duplicate-cleanup) 
 
 ## Docker Hub
@@ -24,7 +25,7 @@ A prebuilt image is hosted on [docker hub](https://hub.docker.com/r/iampuid0/pd_
 
 
 ## Docker-compose
-```
+```YAML
 version: "3.8"
 
 services:
@@ -34,7 +35,7 @@ services:
     stdin_open: true # docker run -i
     tty: true        # docker run -t    
     volumes:
-      ## Location of configuration files. If a Zurg config.yml and/or Zurg app is placed here, it will be used to override the default configuration and/or app used at startup 
+      ## Location of configuration files. If a Zurg config.yml and/or Zurg app is placed here, it will be used to override the default configuration and/or app used at startup. 
       - /pd_zurg/config:/config
       ## Location for logs
       - /pd_zurg/log:/log
@@ -98,7 +99,7 @@ services:
 ### Docker CLI
 
 ```
-docker build -t yourimagename https://github.com/I-am-PUID-0/pd_zurg.git
+docker build -t your-image-name https://github.com/I-am-PUID-0/pd_zurg.git
 ```
 
 
@@ -134,9 +135,9 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 |`SHOW_MENU`| Enable the plex_debrid menu to show upon startup, requiring user interaction before the program runs. Conversely, if the plex_debrid menu is disabled, the program will automatically run upon successful startup. If used, the value must be ```true``` or ```false``` | `true` |
 |`PD_LOGFILE`| Log file for plex_debrid. The log file will appear in the ```/config``` as ```plex_debrid.log```. If used, the value must be ```true``` or ```false``` | `false` |
 |`PD_UPDATE`| Enable automatic updates of plex_debrid. Adding this variable will enable automatic updates to the latest version of plex_debrid locally within the container. | `false` |
-|`AUTO_UPDATE_INTERVAL`| Interval between automatic update checks in hours. Vaules can be any positive [whole](https://www.oxfordlearnersdictionaries.com/us/definition/english/whole-number) or [decimal](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095705740;jsessionid=3FDC96CC0D79CCE69702661D025B9E9B#:~:text=The%20separator%20used%20between%20the,number%20expressed%20in%20decimal%20representation.) point based number. Ex. a value of .5 would yield thirty minutes and 1.5 would yield one and a half hours | `24` |
+|`AUTO_UPDATE_INTERVAL`| Interval between automatic update checks in hours. Vaules can be any positive [whole](https://www.oxfordlearnersdictionaries.com/us/definition/english/whole-number) or [decimal](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095705740;jsessionid=3FDC96CC0D79CCE69702661D025B9E9B#:~:text=The%20separator%20used%20between%20the,number%20expressed%20in%20decimal%20representation.) point based number. Ex. a value of .5 would yield thirty minutes, and 1.5 would yield one and a half hours | `24` |
 |`DUPLICATE_CLEANUP`| Automated cleanup of duplicate content in Plex.  | `false` |
-|`CLEANUP_INTERVAL`| Interval between duplicate cleanup in hours. Vaules can be any positive [whole](https://www.oxfordlearnersdictionaries.com/us/definition/english/whole-number) or [decimal](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095705740;jsessionid=3FDC96CC0D79CCE69702661D025B9E9B#:~:text=The%20separator%20used%20between%20the,number%20expressed%20in%20decimal%20representation.) point based number. Ex. a value of .5 would yield thirty minutes and 1.5 would yield one and a half hours | `24` |
+|`CLEANUP_INTERVAL`| Interval between duplicate cleanup in hours. Values can be any positive [whole](https://www.oxfordlearnersdictionaries.com/us/definition/english/whole-number) or [decimal](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095705740;jsessionid=3FDC96CC0D79CCE69702661D025B9E9B#:~:text=The%20separator%20used%20between%20the,number%20expressed%20in%20decimal%20representation.) point based number. Ex. a value of .5 would yield thirty minutes and 1.5 would yield one and a half hours | `24` |
 |`PDZURG_LOG_LEVEL`| The level at which logs should be captured. See the python [Logging Levels](https://docs.python.org/3/library/logging.html#logging-levels) documentation for more details  | `INFO` |
 |`PDZURG_LOG_COUNT`| The number logs to retain. Result will be value + current log  | `2` |
 |`ZURG_ENABLED`| Set the value "true" to enable the Zurg process | `false ` | | | :heavy_check_mark:|
@@ -146,7 +147,7 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 
 ## Data Volumes
 
-The following table describes data volumes used by the container.  The mappings
+The following table describes the data volumes used by the container.  The mappings
 are set via the `-v` parameter or via the docker-compose file within the ```volumes:``` section.  Each mapping is specified with the following
 format: `<HOST_DIR>:<CONTAINER_DIR>[:PERMISSIONS]`.
 
@@ -157,6 +158,46 @@ format: `<HOST_DIR>:<CONTAINER_DIR>[:PERMISSIONS]`.
 |`/data`| rshared  | This is where rclone will be mounted. Not required when only utilizing plex_debrid   |
 |`/zurg/RD`| rw| This is where Zurg will store the active configuration and data for RealDebrid. Not required when only utilizing plex_debrid   |
 |`/zurg/AD`| rw | This is where Zurg will store the active configuration and data for AllDebrid. Not required when only utilizing plex_debrid   |
+
+## Docker Secrets
+
+pd_zurg supports the use of docker secrets for the following environment variables:
+
+| Variable       | Description                                  | Default | Required for rclone| Required for plex_debrid| Required for zurg|
+|----------------|----------------------------------------------|---------|:-:|:-:|:-:|
+|`RD_API_KEY`| [RealDebrid API key](https://real-debrid.com/apitoken) | ` ` | | :heavy_check_mark:| :heavy_check_mark:|
+|`AD_API_KEY`| [AllDebrid API key](https://alldebrid.com/apikeys/) | ` ` | | :heavy_check_mark:| :heavy_check_mark:|
+|`PLEX_USER`| The [Plex USERNAME](https://app.plex.tv/desktop/#!/settings/account) for your account | ` ` || :heavy_check_mark:|
+|`PLEX_TOKEN`| The [Plex Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/) associated with PLEX_USER | ` ` || :heavy_check_mark:|
+|`PLEX_ADDRESS`| The URL of your Plex server. Example: http://192.168.0.100:32400 or http://plex:32400 - format must include ```http://``` or ```https://``` and have no trailing characters after the port number (32400). E.g., ```/``` | ` ` || :heavy_check_mark:|
+
+
+To utilize docker secrets, remove the associated environment variables from the docker-compose, create a file with the case-sensitive naming convention identified and secret value, then reference the file in the docker-compose file as shown below:
+```YAML
+version: '3.8'
+
+services:
+  pd_zurg:
+    image: iampuid0/pd_zurg:latest
+    secrets:
+      - rd_api_key
+      - ad_api_key
+      - plex_user
+      - plex_token
+      - plex_address
+
+secrets:
+  rd_api_key:
+    file: ./path/to/rd_api_key.txt
+  ad_api_key:
+    file: ./path/to/ad_api_key.txt
+  plex_user:
+    file: ./path/to/plex_user.txt
+  plex_token:
+    file: ./path/to/plex_token.txt
+  plex_address:
+    file: ./path/to/plex_address.txt
+```
 
 ## TODO
 

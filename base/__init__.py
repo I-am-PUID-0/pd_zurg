@@ -183,12 +183,19 @@ def get_logger(log_name='PDZURG', log_dir='./log'):
     logger.addHandler(stdout_handler)
     return logger
 
+def load_secret_or_env(secret_name, default=None):
+    secret_file = f'/run/secrets/{secret_name}'
+    try:
+        with open(secret_file, 'r') as file:
+            return file.read().strip()
+    except IOError:
+        return os.getenv(secret_name.upper(), default)
 
-PLEXUSER = os.getenv('PLEX_USER')
-PLEXTOKEN = os.getenv('PLEX_TOKEN')
-RDAPIKEY = os.getenv('RD_API_KEY')
-ADAPIKEY = os.getenv('AD_API_KEY')
-PLEXADD = os.getenv('PLEX_ADDRESS')
+PLEXUSER = load_secret_or_env('plex_user')
+PLEXTOKEN = load_secret_or_env('plex_token')
+RDAPIKEY = load_secret_or_env('rd_api_key')
+ADAPIKEY = load_secret_or_env('ad_api_key')
+PLEXADD = load_secret_or_env('plex_address')
 SHOWMENU = os.getenv('SHOW_MENU')
 LOGFILE = os.getenv('PD_LOGFILE')
 PDUPDATE = os.getenv('PD_UPDATE')

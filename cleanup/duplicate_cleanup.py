@@ -144,20 +144,25 @@ def process_movies():
 
 def setup():
     try:
-        env_variables = ["PLEX_ADDRESS", "PLEX_TOKEN", "RCLONE_MOUNT_NAME"]
+        app_env_variables = {
+            "PLEX_ADDRESS": PLEXADD,
+            "PLEX_TOKEN": PLEXTOKEN,
+            "RCLONE_MOUNT_NAME": RCLONEMN
+        }
+
         logger.info("Checking required duplicate cleanup environment variables.")
-        for var_name in env_variables:
-            value = os.environ.get(var_name)
+        for var_name, value in app_env_variables.items():
             if value is None:
-                logger.error("Environment variable '%s' is not set.", var_name)
+                logger.error(f"Application environment variable '{var_name}' is not set.")
             else:
-                logger.debug("Environment variable '%s' is set.", var_name)
-        if all(os.environ.get(var_name) for var_name in env_variables):   
+                logger.debug(f"Application environment variable '{var_name}' is set.")
+
+        if all(app_env_variables.values()):
             if DUPECLEAN is not None and cleanup_interval() == 24:
                 logger.info("Duplicate cleanup interval missing")
                 logger.info("Defaulting to " + format_time(cleanup_interval()))
                 cleanup_thread()
-            elif not (DUPECLEAN is None):
+            elif DUPECLEAN is not None:
                 logger.info("Duplicate cleanup interval set to " + format_time(cleanup_interval()))
                 cleanup_thread()
     except Exception as e:

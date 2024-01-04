@@ -17,7 +17,7 @@ A combined docker image for the unified deployment of **[itsToggle's](https://gi
  - [Automatic Update of Zurg to the latest version](https://github.com/I-am-PUID-0/pd_zurg/wiki#automatic-update-of-zurg-to-the-latest-version)
  - [Version selection of zurg to the user-defined version](https://github.com/I-am-PUID-0/pd_zurg/wiki#version-selection-of-zurg-to-the-user-defined-version)
  - [Use of .env file for setting environment variables](https://github.com/I-am-PUID-0/pd_zurg/wiki#use-of-env-file-for-setting-environment-variables)
- - [Use of Docker Secret file for setting sensitive variables](https://github.com/I-am-PUID-0/pd_zurg_private#docker-secrets)
+ - [Use of Docker Secret file for setting sensitive variables](https://github.com/I-am-PUID-0/pd_zurg#docker-secrets)
  - [Duplicate Cleanup](https://github.com/I-am-PUID-0/pd_zurg/wiki#duplicate-cleanup) 
 
 ## Docker Hub

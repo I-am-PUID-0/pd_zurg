@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - SEERR_ADDRESS: SEERR_ADDRESS env var added to enable Overseerr/Jellyseerr integration
 - PLEX_REFRESH: PLEX_REFRESH env var added to enable Plex library refresh w/ Zurg
 - PLEX_MOUNT_DIR: PLEX_MOUNT_DIR env var added to enable Plex library refresh w/ Zurg
-- 
+ 
 ### Changed
 
 - plex_debrid setup: plex_debrid setup process now allows for selection of Plex or Jellyfin

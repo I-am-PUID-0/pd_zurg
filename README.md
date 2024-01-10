@@ -23,6 +23,9 @@ A combined docker image for the unified deployment of **[itsToggle's](https://gi
 ## Docker Hub
 A prebuilt image is hosted on [docker hub](https://hub.docker.com/r/iampuid0/pd_zurg) 
 
+## GitHub Container Registry
+A prebuilt image is hosted on [GitHub Container Registry](https://github.com/I-am-PUID-0/pd_zurg/pkgs/container/pd_zurg)
+
 
 ## Docker-compose
 ```YAML
@@ -32,6 +35,8 @@ services:
   pd_zurg:
     container_name: pd_zurg
     image: iampuid0/pd_zurg:latest
+    ## Optionally, specify a specific version of pd_zurg
+    # image: iampuid0/pd_zurg:2.0.0
     stdin_open: true # docker run -i
     tty: true        # docker run -t    
     volumes:
@@ -56,6 +61,8 @@ services:
      # - ZURG_LOG_LEVEL=DEBUG
      # - ZURG_VERSION=v0.9.2-hotfix.4
      # - ZURG_UPDATE=true
+     # - PLEX_REFRESH=true
+     # - PLEX_MOUNT_DIR=/pd_zurg 
       ## Rclone Required Settings
       - RCLONE_MOUNT_NAME=pd_zurg
       ## Rclone Optional Settings - See rclone docs for full list
@@ -71,12 +78,19 @@ services:
      # - RCLONE_VFS_READ_CHUNK_SIZE_LIMIT=1G
      # - RCLONE_TRANSFERS=8
       ## Plex Debrid Required Settings
+      - PD_ENABLED=true
+      ## To utilize plex_debrid with Plex, the following environment variables are required
       - PLEX_USER=
       - PLEX_TOKEN=
       - PLEX_ADDRESS=
+      ## To utilize plex_debrid with Jellyfin, the following environment variables are required - Note that plex_debrid will require addtional setup befor use with Jellyfin
+     # - JF_ADDRESS
+     # - JF_API_KEY
       ## Plex Debrid Optional Settings
      # - PD_UPDATE=true   
      # - SHOW_MENU=false
+     # - SEERR_API_KEY=
+     # - SEERR_ADDRESS=
       ## Special Features
      # - AUTO_UPDATE_INTERVAL=12
      # - DUPLICATE_CLEANUP=true
@@ -102,6 +116,23 @@ services:
 docker build -t your-image-name https://github.com/I-am-PUID-0/pd_zurg.git
 ```
 
+## Plex or Jellyfin/Emby deployment
+
+To use plex_debrid with Plex, the following environment variables are required: PD_ENABLED, PLEX_USER, PLEX_TOKEN, PLEX_ADDRESS
+
+To use plex_debrid with Jellyfin/Emby, the following environment variables are required: PD_ENABLED, JF_ADDRESS, JF_API_KEY
+
+### Note: Addtional setup required for Jellyfin
+plex_debrid requires the Library collection service to be set for Trakt Collection: see the plex_debrid [Trakt Collections](https://github.com/itsToggle/plex_debrid#open_file_folder-library-collection-service) for more details
+
+## Plex Refresh
+
+To enable Plex library refresh with Zurg, the following environment variables are required: PLEX_REFRESH, PLEX_MOUNT_DIR, PLEX_ADDRESS, PLEX_TOKEN, ZURG_ENABLED, RD_API_KEY, RCLONE_MOUNT_NAME
+
+## SEERR Integration
+
+To enable either Overseerr or Jellyseerr integration with plex_debrid, the following environment variables are required: SEERR_API_KEY, SEERR_ADDRESS
+
 
 ## Automatic Updates
 If you would like to enable automatic updates for plex_debrid, utilize the ```PD_UPDATE``` environment variable. 
@@ -118,21 +149,24 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 
 | Variable       | Description                                  | Default | Required for rclone| Required for plex_debrid| Required for zurg|
 |----------------|----------------------------------------------|---------|:-:|:-:|:-:|
-|`TZ`| [TimeZone](http://en.wikipedia.org/wiki/List_of_tz_database_time_zones) used by the container | ` ` |
-|`RD_API_KEY`| [RealDebrid API key](https://real-debrid.com/apitoken) | ` ` | | :heavy_check_mark:| :heavy_check_mark:|
-|`AD_API_KEY`| [AllDebrid API key](https://alldebrid.com/apikeys/) | ` ` | | :heavy_check_mark:| :heavy_check_mark:|
-|`RCLONE_MOUNT_NAME`| A name for the rclone mount | ` ` | :heavy_check_mark:|
+|`TZ`| [TimeZone](http://en.wikipedia.org/wiki/List_of_tz_database_time_zones) used by the container |  |
+|`RD_API_KEY`| [RealDebrid API key](https://real-debrid.com/apitoken) |  | | :heavy_check_mark:| :heavy_check_mark:|
+|`AD_API_KEY`| [AllDebrid API key](https://alldebrid.com/apikeys/) |  | | :heavy_check_mark:| :heavy_check_mark:|
+|`RCLONE_MOUNT_NAME`| A name for the rclone mount |  | :heavy_check_mark:|
 |`RCLONE_LOG_LEVEL`| [Log level](https://rclone.org/docs/#log-level-level) for rclone | `NOTICE` |
-|`RCLONE_LOG_FILE`| [Log file](https://rclone.org/docs/#log-file-file) for rclone | ` ` |
+|`RCLONE_LOG_FILE`| [Log file](https://rclone.org/docs/#log-file-file) for rclone |  |
 |`RCLONE_DIR_CACHE_TIME`| [How long a directory should be considered up to date and not refreshed from the backend](https://rclone.org/commands/rclone_mount/#vfs-directory-cache) #optional, but recommended is 10s. | `5m` |
-|`RCLONE_CACHE_DIR`| [Directory used for caching](https://rclone.org/docs/#cache-dir-dir). | ` ` |
-|`RCLONE_VFS_CACHE_MODE`| [Cache mode for VFS](https://rclone.org/commands/rclone_mount/#vfs-file-caching) | ` ` |
-|`RCLONE_VFS_CACHE_MAX_SIZE`| [Max size of the VFS cache](https://rclone.org/commands/rclone_mount/#vfs-file-caching) | ` ` |
-|`RCLONE_VFS_CACHE_MAX_AGE`| [Max age of the VFS cache](https://rclone.org/commands/rclone_mount/#vfs-file-caching) | ` ` |
-|`PLEX_USER`| The [Plex USERNAME](https://app.plex.tv/desktop/#!/settings/account) for your account | ` ` || :heavy_check_mark:|
-|`PLEX_TOKEN`| The [Plex Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/) associated with PLEX_USER | ` ` || :heavy_check_mark:|
-|`PLEX_ADDRESS`| The URL of your Plex server. Example: http://192.168.0.100:32400 or http://plex:32400 - format must include ```http://``` or ```https://``` and have no trailing characters after the port number (32400). E.g., ```/``` | ` ` || :heavy_check_mark:|
+|`RCLONE_CACHE_DIR`| [Directory used for caching](https://rclone.org/docs/#cache-dir-dir). |  |
+|`RCLONE_VFS_CACHE_MODE`| [Cache mode for VFS](https://rclone.org/commands/rclone_mount/#vfs-file-caching) |  |
+|`RCLONE_VFS_CACHE_MAX_SIZE`| [Max size of the VFS cache](https://rclone.org/commands/rclone_mount/#vfs-file-caching) | |
+|`RCLONE_VFS_CACHE_MAX_AGE`| [Max age of the VFS cache](https://rclone.org/commands/rclone_mount/#vfs-file-caching) |  |
+|`PLEX_USER`| The [Plex Username](https://app.plex.tv/desktop/#!/settings/account) for your account | || :heavy_check_mark:|
+|`PLEX_TOKEN`| The [Plex Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/) associated with PLEX_USER |  || :heavy_check_mark:|
+|`PLEX_ADDRESS`| The URL of your Plex server. Example: http://192.168.0.100:32400 or http://plex:32400 - format must include ```http://``` or ```https://``` and have no trailing characters after the port number (32400). E.g., ```/``` ||| :heavy_check_mark:|
+|`PLEX_REFRESH`| Set the value "true" to enable Plex library refresh called by the Zurg process  | `false ` | | | |
+|`PLEX_MOUNT_DIR`| Set the value to the mount location used within Plex to enable Plex library refresh called by the Zurg process  |  | | | |
 |`SHOW_MENU`| Enable the plex_debrid menu to show upon startup, requiring user interaction before the program runs. Conversely, if the plex_debrid menu is disabled, the program will automatically run upon successful startup. If used, the value must be ```true``` or ```false``` | `true` |
+|`PD_ENABLED`| Set the value "true" to enable the plex_debrid process | `false ` | | :heavy_check_mark: | |
 |`PD_LOGFILE`| Log file for plex_debrid. The log file will appear in the ```/config``` as ```plex_debrid.log```. If used, the value must be ```true``` or ```false``` | `false` |
 |`PD_UPDATE`| Enable automatic updates of plex_debrid. Adding this variable will enable automatic updates to the latest version of plex_debrid locally within the container. | `false` |
 |`AUTO_UPDATE_INTERVAL`| Interval between automatic update checks in hours. Vaules can be any positive [whole](https://www.oxfordlearnersdictionaries.com/us/definition/english/whole-number) or [decimal](https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095705740;jsessionid=3FDC96CC0D79CCE69702661D025B9E9B#:~:text=The%20separator%20used%20between%20the,number%20expressed%20in%20decimal%20representation.) point based number. Ex. a value of .5 would yield thirty minutes, and 1.5 would yield one and a half hours | `24` |
@@ -144,6 +178,11 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 |`ZURG_VERSION`| The version of Zurg to use. If enabled, the value should contain v0.9.x or v0.9.x-hotfix.x format | `latest` | | | |
 |`ZURG_UPDATE`| Enable automatic updates of Zurg. Adding this variable will enable automatic updates to the latest version of Zurg locally within the container. | `false` | | | |
 |`ZURG_LOG_LEVEL`| Set the log level for Zurg | `INFO` | | | |
+|`JF_API_KEY`| The Jellyfin/Emby API Key ||| :heavy_check_mark:||
+|`JF_ADDRESS`| The URL of your Jellyfin/Emby server. Example: http://192.168.0.101:8096 or http://jellyfin:8096 - format must include ```http://``` or ```https://``` and have no trailing characters after the port number (8096). E.g., ```/``` ||| :heavy_check_mark:|
+|`SEERR_API_KEY`| The Jellyseerr or Overseerr API Key ||| :heavy_check_mark:||
+|`SEERR_ADDRESS`| The URL of your Jellyseerr or Overseerr server. Example: http://192.168.0.102:5055 or http://Overseerr:5055 - format must include ```http://``` or ```https://``` and have no trailing characters after the port number (8096). E.g., ```/``` ||| :heavy_check_mark:|
+
 
 ## Data Volumes
 
@@ -170,7 +209,10 @@ pd_zurg supports the use of docker secrets for the following environment variabl
 |`PLEX_USER`| The [Plex USERNAME](https://app.plex.tv/desktop/#!/settings/account) for your account | ` ` || :heavy_check_mark:|
 |`PLEX_TOKEN`| The [Plex Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/) associated with PLEX_USER | ` ` || :heavy_check_mark:|
 |`PLEX_ADDRESS`| The URL of your Plex server. Example: http://192.168.0.100:32400 or http://plex:32400 - format must include ```http://``` or ```https://``` and have no trailing characters after the port number (32400). E.g., ```/``` | ` ` || :heavy_check_mark:|
-
+|`JF_API_KEY`| The Jellyfin API Key | ` ` || :heavy_check_mark:||
+|`JF_ADDRESS`| The URL of your Jellyfin server. Example: http://192.168.0.101:8096 or http://jellyfin:8096 - format must include ```http://``` or ```https://``` and have no trailing characters after the port number (8096). E.g., ```/``` | ` ` || :heavy_check_mark:|
+|`SEERR_API_KEY`| The Jellyseerr or Overseerr API Key | ` ` || :heavy_check_mark:||
+|`SEERR_ADDRESS`| The URL of your Jellyseerr or Overseerr server. Example: http://192.168.0.102:5055 or http://Overseerr:5055 - format must include ```http://``` or ```https://``` and have no trailing characters after the port number (8096). E.g., ```/``` | ` ` || :heavy_check_mark:|
 
 To utilize docker secrets, remove the associated environment variables from the docker-compose, create a file with the case-sensitive naming convention identified and secret value, then reference the file in the docker-compose file as shown below:
 ```YAML
@@ -185,6 +227,10 @@ services:
       - plex_user
       - plex_token
       - plex_address
+      - jf_api_key
+      - jf_address
+      - seerr_api_key
+      - seerr_address
 
 secrets:
   rd_api_key:
@@ -197,7 +243,16 @@ secrets:
     file: ./path/to/plex_token.txt
   plex_address:
     file: ./path/to/plex_address.txt
+  jf_api_key:
+    file: ./path/to/jf_api_key.txt
+  jf_address:
+    file: ./path/to/jf_address.txt
+  seerr_api_key:
+    file: ./path/to/seerr_api_key.txt
+  seerr_address:
+    file: ./path/to/seerr_address.txt
 ```
+
 
 ## TODO
 
@@ -213,7 +268,7 @@ For additional details on deployment, see the [pd_zurg Wiki](https://github.com/
 ### pd_zurg
 - For questions related to pd_zurg, see the GitHub [discussions](https://github.com/I-am-PUID-0/pd_zurg/discussions)
 - or create a new [issue](https://github.com/I-am-PUID-0/pd_zurg/issues) if you find a bug or have an idea for an improvement.
-- or join the pd_zurg [discord server](https://discord.gg/n5nQRYtrw2)
+- or join the pd_zurg [discord server](https://discord.gg/EPSWqmeeXM)
 
 ### plex_debrid
 - For questions related to plex_debrid, see the GitHub [discussions](https://github.com/itsToggle/plex_debrid/discussions) 

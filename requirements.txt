@@ -5,3 +5,4 @@ psutil
 plexapi
 requests
 packaging
+ruamel.yaml

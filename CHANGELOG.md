@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Version [2.0.0] - 2024-01-04
+
+### Breaking Change
+
+- PD_ENABLED: Added PD_ENABLED env var to enable/disable plex_debrid service
+- PLEX_USER: PLEX_USER env var no longer enables plex_debrid service
+
+### Added
+
+- JF_API_KEY: JF_API_KEY env var added to enable Jellyfin integration
+- JF_ADDRESS: JF_ADDRESS env var added to enable Jellyfin integration
+- SEERR_API_KEY: SEERR_API_KEY env var added to enable Overseerr/Jellyseerr integration
+- SEERR_ADDRESS: SEERR_ADDRESS env var added to enable Overseerr/Jellyseerr integration
+- PLEX_REFRESH: PLEX_REFRESH env var added to enable Plex library refresh w/ Zurg
+- PLEX_MOUNT_DIR: PLEX_MOUNT_DIR env var added to enable Plex library refresh w/ Zurg
+- 
+### Changed
+
+- plex_debrid setup: plex_debrid setup process now allows for selection of Plex or Jellyfin
+
+### Removed
+
+- ZURG_LOG_LEVEL: Removed the need for ZURG_LOG_LEVEL env var - now set by PDZURG_LOG_LEVEL
+- RCLONE_LOG_LEVEL: Removed the need for RCLONE_LOG_LEVEL env var - now set by PDZURG_LOG_LEVEL
+
 
 ## Version [1.1.0] - 2024-01-04
 
@@ -39,9 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version [1.0.0] - 2023-12-21
 
+### Breaking Change
+
+- Automatic Updates: AUTO_UPDATE env var renamed to PD_UPDATE
+
 ### Changed
 
-- Automatic Updates: Breaking Change: AUTO_UPDATE env var renamed to PD_UPDATE
 - Automatic Updates: Refactored update process to allow for scaling of update process
 - Healthcheck: Refactored healthcheck process to allow for scaling of healthcheck process
 - Healthcheck: rclone mount check now uses rclone process instead of rclone mount location

@@ -8,17 +8,18 @@ def zurg_setup():
     zurg_app_base = '/zurg/zurg'
     zurg_config_override = '/config/config.yml'
     zurg_config_base = '/zurg/config.yml'
-    
+  
     try:
-        if ZURGLOGLEVEL is not None:
+        if ZURGLOGLEVEL is not None:    # Needs addtional testing
             os.environ['LOG_LEVEL'] = ZURGLOGLEVEL
-            logger.debug(f"'LOG_LEVEL' set to '{ZURGLOGLEVEL}' based on 'ZURG_LOG_LEVEL'")
-        else:
-            logger.info("'ZURG_LOG_LEVEL' not set. Default log level INFO will be used for Zurg.")
+            LOGLEVEL = os.environ.get('LOG_LEVEL')
+        #    logger.debug(f"'LOG_LEVEL' set to '{LOGLEVEL}' based on 'ZURG_LOG_LEVEL'")
+        #else:
+        #    logger.info("'ZURG_LOG_LEVEL' not set. Default log level INFO will be used for Zurg.")
 
     except Exception as e:
         logger.error(f"Error setting Zurg log level from 'ZURG_LOG_LEVEL': {e}")
-        
+
     def update_token(file_path, token):
         logger.debug(f"Updating token in config file: {file_path}")
         with open(file_path, 'r') as file:
@@ -40,6 +41,34 @@ def zurg_setup():
                     file.write(f"port: {port}\n")
                 else:
                     file.write(line)
+                    
+    def plex_refresh(file_path):
+        logger.info(f"Updating Plex Refresh in config file: {file_path}")
+        yaml = YAML()
+        yaml.indent(mapping=4, sequence=4, offset=2)
+        yaml.preserve_quotes = True
+        with open(file_path, 'r') as file:
+            config = yaml.load(file)
+
+        config['on_library_update'] = (
+            "tmpfile=$(mktemp)\n"
+            "for arg in \"$@\"\n"
+            "do\n"
+            "    echo \"$arg\" >> \"$tmpfile\"\n"
+            "done\n\n"
+            "unique_args=$(sort -u \"$tmpfile\")\n\n"
+            "if [ -n \"$unique_args\" ]; then\n"
+            "    IFS=$'\\n'\n"
+            "    for line in $unique_args; do\n"
+            "        python plex_refresh.py \"$line\"\n"
+            "    done\n"
+            "    unset IFS\n"
+            "fi\n"
+            "rm \"$tmpfile\"\n"
+        )
+
+        with open(file_path, 'w') as file:
+            yaml.dump(config, file)
 
     def check_and_set_zurg_version(dir_path):
         zurg_binary_path = os.path.join(dir_path, 'zurg')
@@ -63,6 +92,7 @@ def zurg_setup():
         try:    
             zurg_executable_path = os.path.join(config_dir, 'zurg')
             config_file_path = os.path.join(config_dir, 'config.yml')
+            refresh_file_path = os.path.join(config_dir, 'plex_refresh.py')
             logger.info(f"Preparing Zurg instance for {key_type}")
         
             if os.path.exists(zurg_app_override):
@@ -94,8 +124,21 @@ def zurg_setup():
             update_port(config_file_path, port)
             os.environ[f'ZURG_PORT_{key_type}'] = str(port)       
             logger.debug(f"Zurg w/ {key_type} instance configured to port: {port}")
+            if PLEXREFRESH is not None and PLEXREFRESH.lower() == "true":
+                if PLEXADD and PLEXTOKEN and PLEXMOUNT:
+                    plex_refresh(config_file_path)
+                    if not os.path.exists(refresh_file_path):
+                        logger.debug(f"Copying Plex Refresh script from base: /zurg/plex_refresh.py to {refresh_file_path}")
+                        shutil.copy('/zurg/plex_refresh.py', refresh_file_path)
+                else:
+                    if not PLEXTOKEN:
+                        raise Exception("PLEX_TOKEN is required for Plex Refresh")
+                    if not PLEXADD:
+                        raise Exception("PLEX_ADDRESS is required for Plex Refresh") 
+                    if not PLEXMOUNT:
+                        raise Exception("PLEX_MOUNT_DIR is required for Plex Refresh")
         except Exception as e:
-            logger.error(f"Error setting up Zurg instance for {key_type}: {e}")        
+            raise Exception(f"Error setting up Zurg instance for {key_type}: {e}")        
 
     try:
         if not RDAPIKEY and not ADAPIKEY:
@@ -119,11 +162,11 @@ def zurg_setup():
         logger.info("Zurg setup process complete")
 
     except FileNotFoundError as e:
-        logger.error(f"FileNotFoundError: The file was not found during zurg setup - {e}")
+        raise Exception(f"FileNotFoundError: The file was not found during zurg setup - {e}")
     except PermissionError as e:
-        logger.error(f"PermissionError: Permission denied during file operation or subprocess execution for zerg setup - {e}")
+        raise Exception(f"PermissionError: Permission denied during file operation or subprocess execution for zerg setup - {e}")
     except Exception as e:
-        logger.error(f"Exception: An error occurred during zurg setup - {e}")
+        raise Exception(f"Exception: An error occurred during zurg setup - {e}")
 
 if __name__ == "__main__":
     zurg_setup()

@@ -13,9 +13,18 @@ class BaseUpdate:
             else:    
                 self.logger.info(f"Starting {process_name}")   
             if process_name != "plex_debrid":
-                self.process = subprocess.Popen(command, stdout=subprocess.PIPE, start_new_session=True, stderr=subprocess.STDOUT, cwd=config_dir, universal_newlines=True, bufsize=1)
-                self.subprocess_logger = SubprocessLogger(self.logger, f"{process_name} w/ " + key_type)
-                self.subprocess_logger.start(self.process)
+                self.process = subprocess.Popen(
+                    command, 
+                    stdout=subprocess.PIPE, 
+                    stderr=subprocess.PIPE,
+                    start_new_session=True, 
+                    cwd=config_dir, 
+                    universal_newlines=True, 
+                    bufsize=1
+                )
+                self.subprocess_logger = SubprocessLogger(self.logger, f"{process_name} w/ {key_type}")
+                self.subprocess_logger.start_logging_stdout(self.process)
+                self.subprocess_logger.start_monitoring_stderr(self.process, key_type, process_name)                
             else: 
                 self.process = subprocess.Popen(command, start_new_session=True)
         except Exception as e:

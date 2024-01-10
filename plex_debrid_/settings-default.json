@@ -17,21 +17,14 @@
     ],
     "Overseerr API Key": "",
     "Overseerr Base URL": "",
-    "Library collection service": [
-        "Plex Library"
-    ],
-    "Library update services": [
-        "Plex Libraries"
-    ],
+    "Library collection service": [],
+    "Library update services": [],
     "Library ignore services": [
         "Local Ignore List"
     ],
     "Trakt library user": [],
     "Trakt refresh user": [],
-    "Plex library refresh": [
-        "1",
-        "2"
-    ],
+    "Plex library refresh": [],
     "Plex library partial scan": "true",
     "Plex library refresh delay": "2",
     "Plex server address": "http://localhost:32400",

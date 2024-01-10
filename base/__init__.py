@@ -21,6 +21,7 @@ import re
 import random
 import zipfile
 import platform
+from ruamel.yaml import YAML
 
 
 load_dotenv(find_dotenv('./config/.env'))
@@ -29,15 +30,58 @@ class SubprocessLogger:
     def __init__(self, logger, key_type):
         self.logger = logger
         self.key_type = key_type
+        self.log_methods = {
+            'DEBUG': logger.debug,
+            'INFO': logger.info,
+            'NOTICE': logger.debug,
+            'WARNING': logger.warning,
+            'ERROR': logger.error,
+            'UNKNOWN': logger.info
+        }
+    @staticmethod
+    def parse_log_level_and_message(line, process_name):
+        log_levels = {'DEBUG', 'INFO', 'NOTICE', 'WARNING', 'ERROR'}
+        log_level = None
+        message = None
+        log_level_pattern = re.compile(r'({})\s*(.*)'.format('|'.join(log_levels)))
+        match = log_level_pattern.search(line)
+
+        if match:
+            log_level = match.group(1)
+            message = match.group(2).strip()
+            if process_name == 'rclone' and message.startswith(': '):
+                message = message[2:]
+        else:
+            log_level = 'UNKNOWN'
+            message = line
+        return log_level, message
+
+    def monitor_stderr(self, process, mount_name, process_name):
+        for line in process.stderr:
+            line = line.decode().strip()
+            if line:
+                log_level, message = SubprocessLogger.parse_log_level_and_message(line, process_name)
+                log_func = self.log_methods.get(log_level, self.logger.info)
+                if process_name == 'rclone':
+                    log_func(f"rclone mount name \"{mount_name}\": {message}") 
+                else:
+                    log_func(f"{process_name}: {message}")
+
+    def start_monitoring_stderr(self, process, mount_name, process_name):
+        threading.Thread(target=self.monitor_stderr, args=(process, mount_name, process_name)).start()
 
     def log_subprocess_output(self, pipe):
         try:
             for line in iter(pipe.readline, ''):
-                self.logger.info(f"{self.key_type} subprocess: {line.strip()}")
+                line = line.strip()
+                if line:
+                    log_level, message = SubprocessLogger.parse_log_level_and_message(line, self.key_type)
+                    log_func = self.log_methods.get(log_level, self.logger.info)
+                    log_func(f"{self.key_type} subprocess: {message}")
         except ValueError as e:
             self.logger.error(f"Error reading subprocess output for {self.key_type}: {e}")
 
-    def start(self, process):
+    def start_logging_stdout(self, process):
         log_thread = threading.Thread(target=self.log_subprocess_output, args=(process.stdout,))
         log_thread.daemon = True
         log_thread.start()
@@ -165,6 +209,8 @@ def get_logger(log_name='PDZURG', log_dir='./log'):
     log_level_env = os.getenv('PDZURG_LOG_LEVEL')
     if log_level_env:
         log_level = log_level_env.upper()
+        os.environ['LOG_LEVEL'] = log_level
+        os.environ['RCLONE_LOG_LEVEL'] = log_level
     else:
         log_level = 'INFO'
     numeric_level = getattr(logging, log_level, logging.INFO)
@@ -183,6 +229,7 @@ def get_logger(log_name='PDZURG', log_dir='./log'):
     logger.addHandler(stdout_handler)
     return logger
 
+                    
 def load_secret_or_env(secret_name, default=None):
     secret_file = f'/run/secrets/{secret_name}'
     try:
@@ -191,10 +238,15 @@ def load_secret_or_env(secret_name, default=None):
     except IOError:
         return os.getenv(secret_name.upper(), default)
 
+PLEXDEBRID = os.getenv("PD_ENABLED")
 PLEXUSER = load_secret_or_env('plex_user')
 PLEXTOKEN = load_secret_or_env('plex_token')
+JFADD = load_secret_or_env('jf_address')
+JFAPIKEY = load_secret_or_env('jf_api_key')
 RDAPIKEY = load_secret_or_env('rd_api_key')
 ADAPIKEY = load_secret_or_env('ad_api_key')
+SEERRAPIKEY = load_secret_or_env('seerr_api_key')
+SEERRADD = load_secret_or_env('seerr_address')
 PLEXADD = load_secret_or_env('plex_address')
 SHOWMENU = os.getenv('SHOW_MENU')
 LOGFILE = os.getenv('PD_LOGFILE')
@@ -206,3 +258,5 @@ ZURG = os.getenv("ZURG_ENABLED")
 ZURGVERSION = os.getenv("ZURG_VERSION")
 ZURGLOGLEVEL = os.getenv("ZURG_LOG_LEVEL")
 ZURGUPDATE = os.getenv('ZURG_UPDATE')
+PLEXREFRESH = os.getenv('PLEX_REFRESH')
+PLEXMOUNT = os.getenv('PLEX_MOUNT_DIR')

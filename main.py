@@ -9,7 +9,7 @@ from update import auto_update
 def main():
     logger = get_logger()
 
-    version = '1.1.0'
+    version = '2.0.0'
 
     ascii_art = f'''
                                                                           
@@ -55,7 +55,7 @@ def main():
                         else:
                             z_updater.auto_update('Zurg',False)
                     except Exception as e:
-                        logger.error(f"Error in Zurg setup: {e}")
+                        raise Exception(f"Error in Zurg setup: {e}")
                     try:    
                         if RCLONEMN:
                             try:
@@ -67,7 +67,7 @@ def main():
                             except Exception as e:
                                 logger.error(e)                         
                     except Exception as e:
-                        logger.error(f"Error in setup: {e}")                          
+                        raise Exception(f"Error in setup: {e}")                          
                 else:
                     raise MissingAPIKeyException()
             except Exception as e:
@@ -76,7 +76,9 @@ def main():
         logger.error(e)
         
     try:
-        if PLEXUSER:
+        if PLEXDEBRID is None or str(PLEXDEBRID).lower() == 'false':
+            pass
+        elif str(PLEXDEBRID).lower() == 'true':
             try:
                 p.setup.pd_setup()
                 pd_updater = p.update.PlexDebridUpdate()
@@ -85,7 +87,7 @@ def main():
                 else:
                     pd_updater.auto_update('plex_debrid',False)
             except Exception as e:
-                logger.error(f"Error in Plex Debrid setup: {e}")
+                logger.error(f"An error occurred in the plex_debrid setup: {e}")
     except:
         pass
     def perpetual_wait():

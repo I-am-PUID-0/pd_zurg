@@ -37,7 +37,7 @@ try:
         "plex_debrid": {
             "regex": re.compile(r'python ./plex_debrid/main.py --config-dir /config'),
             "error_message": "The plex_debrid process is not running.",
-            "should_run": PLEXUSER
+            "should_run": PLEXDEBRID
         },
         "rclonemn_rd": {
             "regex": re.compile(rf'rclone mount {re.escape(RCLONEMN_RD)}:'),

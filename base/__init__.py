@@ -58,7 +58,10 @@ class SubprocessLogger:
 
     def monitor_stderr(self, process, mount_name, process_name):
         for line in process.stderr:
-            line = line.decode().strip()
+            if isinstance(line, bytes):
+                line = line.decode().strip()
+            else:
+                line = line.strip()
             if line:
                 log_level, message = SubprocessLogger.parse_log_level_and_message(line, process_name)
                 log_func = self.log_methods.get(log_level, self.logger.info)
@@ -73,7 +76,10 @@ class SubprocessLogger:
     def log_subprocess_output(self, pipe):
         try:
             for line in iter(pipe.readline, ''):
-                line = line.strip()
+                if isinstance(line, bytes):
+                    line = line.decode().strip()
+                else:
+                    line = line.strip()
                 if line:
                     log_level, message = SubprocessLogger.parse_log_level_and_message(line, self.key_type)
                     log_func = self.log_methods.get(log_level, self.logger.info)

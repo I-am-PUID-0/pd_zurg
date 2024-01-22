@@ -43,7 +43,7 @@ def pd_setup():
                     raise MissingEnvironmentVariable("JF_ADDRESS")
                 json_data["Jellyfin API Key"] = JFAPIKEY
                 json_data["Jellyfin server address"] = JFADD
-                json_data["Plex users"][0] = []
+                json_data["Plex users"] = []
                 json_data["Plex server address"] = "http://localhost:32400"  
                 update_with_default_services("Library collection service", ["Trakt Collection"], ["Plex Library"])
                 update_with_default_services("Library update services", ["Jellyfin Libraries"], ["Plex Libraries"])
@@ -57,7 +57,7 @@ def pd_setup():
                     raise MissingEnvironmentVariable("PLEX_TOKEN")
                 if not PLEXADD:
                     raise MissingEnvironmentVariable("PLEX_ADDRESS")
-                json_data["Plex users"][0] = [PLEXUSER, PLEXTOKEN]
+                json_data["Plex users"] = [[PLEXUSER, PLEXTOKEN]]
                 json_data["Plex server address"] = PLEXADD
                 json_data["Jellyfin API Key"] = ""
                 json_data["Jellyfin server address"] = "http://localhost:8096"

@@ -262,7 +262,7 @@ See the [pd_zurg roadmap](https://github.com/users/I-am-PUID-0/projects/4) for a
 
 pd_zurg allows for the simultaneous or individual deployment of plex_debrid and/or Zurg w/ rclone
 
-For additional details on deployment, see the [pd_zurg Wiki](https://github.com/I-am-PUID-0/pd_zurg/wiki/Settings#deployment)
+For additional details on deployment, see the [pd_zurg Wiki](https://github.com/I-am-PUID-0/pd_zurg/wiki/Setup-Guides#deployment-options)
 ## Community
 
 ### pd_zurg

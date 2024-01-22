@@ -1,17 +1,23 @@
-from plexapi.server import PlexServer
 import os
-import time
 import sys
+import time
+from plexapi.server import PlexServer
+from pathlib import Path
+plex_refresh_path = Path(__file__).resolve()
+project_path = plex_refresh_path.parent.parent.parent
+sys.path.append(str(project_path))
+from base import PLEXTOKEN, PLEXADD, PLEXMOUNT, RCLONEMN
+
 
 # Configuration
-plex_url = os.getenv("PLEX_ADDRESS", "").replace("'", "").replace('"', '')
-token = os.getenv("PLEX_TOKEN", "").replace("'", "").replace('"', '')
-plex_mount = os.getenv("PLEX_MOUNT_DIR", "").replace("'", "").replace('"', '')
-zurg_mount = f"/data/{os.getenv('RCLONE_MOUNT_NAME')}"
+plex_url = PLEXADD.replace("'", "").replace('"', '')
+token = PLEXTOKEN.replace("'", "").replace('"', '')
+plex_mount = PLEXMOUNT.replace("'", "").replace('"', '')
+zurg_mount = f"/data/{RCLONEMN}"
 zurg_timeout = 300  # 5 minutes in seconds for Zurg file availability
 plex_timeout = 60   # Maximum time to wait for Plex to process the refresh
 wait_increment = 1  # Time increment for each wait step
-max_retries = 5     # Maximum number of retries for Plex refresh
+max_retries = 20     # Maximum number of retries for Plex refresh
 
 ### Do not alter below ###
 plex = PlexServer(plex_url, token)

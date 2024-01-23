@@ -156,7 +156,7 @@ def zurg_setup():
             ad_dir = '/zurg/AD/'
             logger.info(f"Setting up Zurg w/ AllDebrid instance in directory: {ad_dir}")
             os.makedirs(ad_dir, exist_ok=True)
-            check_and_set_zurg_version(rd_dir)               
+            check_and_set_zurg_version(ad_dir)               
             setup_zurg_instance(ad_dir, ADAPIKEY, "AllDebrid")
 
         logger.info("Zurg setup process complete")

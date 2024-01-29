@@ -27,27 +27,27 @@ try:
         "zurg_rd": {
             "regex": re.compile(rf'/zurg/RD/zurg.*--preload', re.IGNORECASE),
             "error_message": "The Zurg RD process is not running.",
-            "should_run": ZURG and RDAPIKEY
+            "should_run": str(ZURG).lower() == 'true' and RDAPIKEY
         },
         "zurg_ad": {
             "regex": re.compile(rf'/zurg/AD/zurg.*--preload', re.IGNORECASE),
             "error_message": "The Zurg AD process is not running.",
-            "should_run": ZURG and ADAPIKEY
+            "should_run": str(ZURG).lower() == 'true' and ADAPIKEY
         },
         "plex_debrid": {
             "regex": re.compile(r'python ./plex_debrid/main.py --config-dir /config'),
             "error_message": "The plex_debrid process is not running.",
-            "should_run": PLEXDEBRID
+            "should_run": str(PLEXDEBRID).lower() == 'true'
         },
         "rclonemn_rd": {
             "regex": re.compile(rf'rclone mount {re.escape(RCLONEMN_RD)}:'),
             "error_message": f"The Rclone RD process for {RCLONEMN_RD} is not running.",
-            "should_run": ZURG and RDAPIKEY
+            "should_run": str(ZURG).lower() == 'true' and RDAPIKEY
         },
         "rclonemn_ad": {
             "regex": re.compile(rf'rclone mount {re.escape(RCLONEMN_AD)}:'),
             "error_message": f"The Rclone AD process for {RCLONEMN_AD} is not running.",
-            "should_run": ZURG and ADAPIKEY
+            "should_run": str(ZURG).lower() == 'true' and ADAPIKEY
         }
     }
 

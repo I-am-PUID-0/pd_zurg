@@ -12,6 +12,7 @@ RUN \
   ln -sf python3 /usr/bin/python && \
   unzip main.zip && \
   rm main.zip && \
+  mkdir /log && \
   mv plex_debrid-main/ plex_debrid && \
   python3 -m venv /venv && \
   source /venv/bin/activate && \

@@ -42,6 +42,20 @@ def zurg_setup():
                 else:
                     file.write(line)
                     
+    def update_creds(file_path, zurguser, zurgpass):
+        logger.debug(f"Updating username and password in config file: {file_path}")
+        with open(file_path, 'r') as file:
+            lines = file.readlines()
+
+        with open(file_path, 'w') as file:
+            for line in lines:
+                if "username:" in line:
+                    file.write(f"username: {zurguser}\n")
+                elif "password:" in line:
+                    file.write(f"password: {zurgpass}\n")
+                else:
+                    file.write(line)             
+                    
     def plex_refresh(file_path):
         logger.info(f"Updating Plex Refresh in config file: {file_path}")
         yaml = YAML()
@@ -116,12 +130,17 @@ def zurg_setup():
                 shutil.copy(zurg_config_base, config_file_path)
             else:
                 logger.info(f"Using Zurg config found for {key_type} in {config_dir}")
-            
-            port = random.randint(9001, 9999)
-            logger.debug(f"Selected port {port} for Zurg w/ {key_type} instance")
-        
+            if ZURGPORT:
+                port = ZURGPORT
+                logger.debug(f"Setting port {port} for Zurg w/ {key_type} instance")
+                update_port(config_file_path, port)
+            else:    
+                port = random.randint(9001, 9999)
+                logger.debug(f"Selected port {port} for Zurg w/ {key_type} instance")
+                update_port(config_file_path, port)       
             update_token(config_file_path, token)
-            update_port(config_file_path, port)
+            if ZURGUSER and ZURGPASS:
+                update_creds(config_file_path, ZURGUSER, ZURGPASS)
             os.environ[f'ZURG_PORT_{key_type}'] = str(port)       
             logger.debug(f"Zurg w/ {key_type} instance configured to port: {port}")
             if PLEXREFRESH is not None and PLEXREFRESH.lower() == "true":

@@ -13,6 +13,15 @@ def get_port_from_config(config_file_path, key_type):
         logger.error(f"Error reading port from config file: {e}")
     return '9999'  
 
+def obscure_password(password):
+    """Obscure the password using rclone."""
+    try:
+        result = subprocess.run(["rclone", "obscure", password], check=True, stdout=subprocess.PIPE)
+        return result.stdout.decode().strip()
+    except subprocess.CalledProcessError as e:
+        print("Error obscuring password:", e)
+        return None
+
 def setup():
     logger.info("Checking rclone flags")
  
@@ -41,6 +50,12 @@ def setup():
                 f.write(f"url = http://localhost:{rd_port}/dav\n")
                 f.write("vendor = other\n")
                 f.write("pacer_min_sleep = 0\n")
+                if ZURGUSER and ZURGPASS:
+                    obscured_password = obscure_password(ZURGPASS)
+                    if obscured_password:
+                        f.write(f"user = {ZURGUSER}\n")
+                        f.write(f"pass = {obscured_password}\n")
+
             if ADAPIKEY:
                 ad_port = get_port_from_config(config_file_path_ad, 'ADAPIKEY')
                 f.write(f"[{RCLONEMN_AD}]\n")
@@ -48,6 +63,11 @@ def setup():
                 f.write(f"url = http://localhost:{ad_port}/dav\n")
                 f.write("vendor = other\n")
                 f.write("pacer_min_sleep = 0\n")
+                if ZURGUSER and ZURGPASS:
+                    obscured_password = obscure_password(ZURGPASS)
+                    if obscured_password:
+                        f.write(f"user = {ZURGUSER}\n")
+                        f.write(f"pass = {obscured_password}\n")
 
         with open("/etc/fuse.conf", "a") as f:
             f.write("user_allow_other\n")
@@ -64,8 +84,17 @@ def setup():
             logger.info(f"Configuring rclone for {mn}")
             subprocess.run(["umount", f"/data/{mn}"], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             os.makedirs(f"/data/{mn}", exist_ok=True)
-    
-            rclone_command = ["rclone", "mount", f"{mn}:", f"/data/{mn}", "--config", "/config/rclone.config", "--allow-other", "--poll-interval=0", "--dir-cache-time=10"]
+            if NFSMOUNT is not None and NFSMOUNT.lower() == "true":
+                if NFSPORT:
+                    port = NFSPORT                    
+                    logger.info(f"Setting up rclone NFS mount server for {mn} at 0.0.0.0:{port}")
+                    rclone_command = ["rclone", "serve", "nfs", f"{mn}:", "--config", "/config/rclone.config", "--addr", f"0.0.0.0:{port}", "--vfs-cache-mode=full", "--dir-cache-time=10"]
+                else: 
+                    port = random.randint(8001, 8999)                    
+                    logger.info(f"Setting up rclone NFS mount server for {mn} at 0.0.0.0:{port}")
+                    rclone_command = ["rclone", "serve", "nfs", f"{mn}:", "--config", "/config/rclone.config", "--addr", f"0.0.0.0:{port}", "--vfs-cache-mode=full", "--dir-cache-time=10"]                    
+            else:
+                rclone_command = ["rclone", "mount", f"{mn}:", f"/data/{mn}", "--config", "/config/rclone.config", "--allow-other", "--poll-interval=0", "--dir-cache-time=10"]
             if not PLEXDEBRID or idx != len(mount_names) - 1:
                 rclone_command.append("--daemon")
     

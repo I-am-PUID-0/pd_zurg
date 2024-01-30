@@ -19,6 +19,8 @@ A combined docker image for the unified deployment of **[itsToggle's](https://gi
  - [Use of .env file for setting environment variables](https://github.com/I-am-PUID-0/pd_zurg/wiki#use-of-env-file-for-setting-environment-variables)
  - [Use of Docker Secret file for setting sensitive variables](https://github.com/I-am-PUID-0/pd_zurg#docker-secrets)
  - [Duplicate Cleanup](https://github.com/I-am-PUID-0/pd_zurg/wiki#duplicate-cleanup) 
+ - [NFS Server for rclone](https://github.com/I-am-PUID-0/pd_zurg/wiki/Features#rclone-nfs-server) 
+ - [Zurg username and password configuration](https://github.com/I-am-PUID-0/pd_zurg/wiki/Features#zurg_user--zurg_pass)
 
 ## Docker Hub
 A prebuilt image is hosted on [docker hub](https://hub.docker.com/r/iampuid0/pd_zurg) 
@@ -63,9 +65,14 @@ services:
      # - ZURG_UPDATE=true
      # - PLEX_REFRESH=true
      # - PLEX_MOUNT_DIR=/pd_zurg 
+     # - ZURG_USER=
+     # - ZURG_PASS=
+     # - ZURG_PORT=8800
       ## Rclone Required Settings
       - RCLONE_MOUNT_NAME=pd_zurg
       ## Rclone Optional Settings - See rclone docs for full list
+     # - NFS_ENABLED=true
+     # - NFS_PORT=8000
      # - RCLONE_LOG_LEVEL=DEBUG
      # - RCLONE_CACHE_DIR=/cache
      # - RCLONE_DIR_CACHE_TIME=10s
@@ -178,10 +185,15 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 |`ZURG_VERSION`| The version of Zurg to use. If enabled, the value should contain v0.9.x or v0.9.x-hotfix.x format | `latest` | | | |
 |`ZURG_UPDATE`| Enable automatic updates of Zurg. Adding this variable will enable automatic updates to the latest version of Zurg locally within the container. | `false` | | | |
 |`ZURG_LOG_LEVEL`| Set the log level for Zurg | `INFO` | | | |
-|`JF_API_KEY`| The Jellyfin/Emby API Key ||| :heavy_check_mark:||
-|`JF_ADDRESS`| The URL of your Jellyfin/Emby server. Example: http://192.168.0.101:8096 or http://jellyfin:8096 - format must include ```http://``` or ```https://``` and have no trailing characters after the port number (8096). E.g., ```/``` ||| :heavy_check_mark:|
-|`SEERR_API_KEY`| The Jellyseerr or Overseerr API Key ||| :heavy_check_mark:||
-|`SEERR_ADDRESS`| The URL of your Jellyseerr or Overseerr server. Example: http://192.168.0.102:5055 or http://Overseerr:5055 - format must include ```http://``` or ```https://``` and have no trailing characters after the port number (8096). E.g., ```/``` ||| :heavy_check_mark:|
+|`JF_API_KEY`| The Jellyfin/Emby API Key ||| ||
+|`JF_ADDRESS`| The URL of your Jellyfin/Emby server. Example: http://192.168.0.101:8096 or http://jellyfin:8096 - format must include ```http://``` or ```https://``` and have no trailing characters after the port number (8096). E.g., ```/``` ||| |
+|`SEERR_API_KEY`| The Jellyseerr or Overseerr API Key ||| ||
+|`SEERR_ADDRESS`| The URL of your Jellyseerr or Overseerr server. Example: http://192.168.0.102:5055 or http://Overseerr:5055 - format must include ```http://``` or ```https://``` and have no trailing characters after the port number (8096). E.g., ```/``` ||| |
+|`ZURG_USER`| The username to be used for protecting the Zurg endpoints.  | `none `| | | |
+|`ZURG_PASS`| The password to be used for protecting the Zurg endpoints.  | `none `  | | | |
+|`ZURG_PORT`| The port to be used for the Zurg server | `random ` | | | |
+|`NFS_ENABLED`| Set the value "true" to enable the NFS server for rclone | `false ` | | | |
+|`NFS_PORT`| The port to be used for the rclone NFS server | `random ` | | | |
 
 
 ## Data Volumes

@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Version [2.1.0] - 2024-01-29
+
+### Added
+
+- ZURG_USER: ZURG_USER env var added to enable Zurg username for Zurg endpoints
+- ZURG_PASS: ZURG_PASS env var added to enable Zurg password for Zurg endpoints
+- NFS_ENABLED: NFS_ENABLED env var added to enable NFS mount for rclone w/ Zurg
+- NFS_PORT: NFS_PORT env var added to define the NFS mount port for rclone w/ Zurg
+- ZURG_PORT: ZURG_PORT env var added to define the Zurg port for Zurg endpoints
+
 ## Version [2.0.5] - 2024-01-29
 
 ### Fixed

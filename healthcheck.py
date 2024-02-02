@@ -23,7 +23,7 @@ try:
     else:
         RCLONEMN_RD = RCLONEMN_AD = RCLONEMN
 
-    mount_type = "serve nfs" if NFSMOUNT else "mount"
+    mount_type = "serve nfs" if not NFSMOUNT is None and str(NFSMOUNT).lower() == 'true' else "mount"
 
     process_info = {
         "zurg_rd": {

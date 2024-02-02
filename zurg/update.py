@@ -37,13 +37,16 @@ class ZurgUpdate(BaseUpdate):
         
     def update_check(self):
         try:
+            repo_owner = 'debridmediamanager'
+            repo_name = 'zurg-testing'            
+
             if ZURGVERSION:
                 self.logger.info(f"ZURG_VERSION is set to: {ZURGVERSION}. Automatic updates will not be applied!")
                 return
             
             from .download import get_latest_release  
             current_version = os.getenv('ZURG_CURRENT_VERSION')
-            latest_release, error = get_latest_release(repo_owner='debridmediamanager', repo_name='zurg-testing')
+            latest_release, error = get_latest_release(repo_owner, repo_name)
             
             if error:
                 self.logger.error(f"Failed to fetch the latest Zurg release: {error}")
@@ -59,9 +62,9 @@ class ZurgUpdate(BaseUpdate):
                 from .download import get_architecture
                 architecture = get_architecture()
                 from .download import download_and_unzip_release
-                base_url = 'https://github.com/debridmediamanager/zurg-testing/raw/main/releases'
-                os.environ['BASE_URL'] = base_url
-                if not download_and_unzip_release(base_url, latest_release, architecture):
+                #base_url = 'https://github.com/debridmediamanager/zurg-testing/raw/main/releases'
+                #os.environ['BASE_URL'] = base_url
+                if not download_and_unzip_release(repo_owner, repo_name, latest_release, architecture):
                     raise Exception("Failed to download and extract the release.")                
                 directories_to_check = ["/zurg/RD", "/zurg/AD"]
                 zurg_presence = {dir_to_check: os.path.exists(os.path.join(dir_to_check, 'zurg')) for dir_to_check in directories_to_check}

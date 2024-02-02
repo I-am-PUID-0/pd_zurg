@@ -50,25 +50,15 @@ def parse_custom_version(version_str):
 def get_latest_release(repo_owner, repo_name):
     try:
         logger.info("Fetching latest Zurg release.")
-        api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/contents/releases"
+        api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/releases/latest"
         response = requests.get(api_url, timeout=10)
         if response.status_code != 200:
             logger.error("Unable to access the repository API. Status code: %s", response.status_code)
             return None, "Error: Unable to access the repository API."
-        contents = response.json()
-        versions = []
-        for item in contents:
-            if item['type'] == 'dir' and item['name'].startswith('v'):
-                version = parse_custom_version(item['name'])
-                if version:
-                    versions.append(version)
-                    logger.debug("Parsed version: %s", item['name'])
-        if not versions:
-            logger.info("No valid releases found.")
-            return None, "No valid releases found."
-        latest_version = max(versions)
-        logger.info("Zurg latest release: %s", latest_version)
-        return str(latest_version), None
+        latest_release = response.json()
+        version_tag = latest_release['tag_name']
+        logger.info("Zurg latest release: %s", version_tag)
+        return version_tag, None
     except Exception as e:
         logger.error(f"Error fetching latest Zurg release: {e}")
         return None, str(e)
@@ -98,9 +88,22 @@ def get_architecture():
         logger.error(f"Error determining system architecture: {e}")
         return 'unknown'
 
-def download_and_unzip_release(base_url, release_version, architecture):
+def download_and_unzip_release(repo_owner, repo_name, release_version, architecture):
     try:
-        download_url = f"{base_url}/{release_version}/zurg-{release_version}-{architecture}.zip?download="
+        api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/releases/tags/{release_version}"
+        response = requests.get(api_url, timeout=10)
+        if response.status_code != 200:
+            logger.error("Failed to get release assets. Status code: %s", response.status_code)
+            return False
+        assets = response.json().get('assets', [])
+        download_url = ""
+        for asset in assets:
+            if architecture in asset['name']:
+                download_url = asset['browser_download_url']
+                break
+        if not download_url:
+            logger.error("No matching asset found for architecture: %s", architecture)
+            return False        
         response = requests.get(download_url, timeout=10)
         logger.debug("Downloading from URL: %s", download_url)
         if response.status_code == 200:
@@ -108,11 +111,11 @@ def download_and_unzip_release(base_url, release_version, architecture):
             zip_file.extractall('zurg')
             logger.info(f"Download and extraction of zurg-{release_version}-{architecture} successful.")
             extracted_files = os.listdir('zurg')
-            logger.debug(f"Extracted files: {extracted_files}")
+            logger.debug(f"Extracted files: {extracted_files}")           
             extracted_file_path = os.path.join('zurg', 'zurg')
             os.chmod(extracted_file_path, 0o755)
             logger.debug("Set 'zurg' file as executable.")
-            os.environ['ZURG_CURRENT_VERSION'] = release_version 
+            os.environ['ZURG_CURRENT_VERSION'] = release_version
         else:
             logger.error("Unable to download the file. Status code: %s", response.status_code)
             return False
@@ -127,8 +130,6 @@ def version_check():
         os.environ['CURRENT_ARCHITECTURE'] = architecture
         repo_owner = 'debridmediamanager'
         repo_name = 'zurg-testing'
-        base_url = 'https://github.com/debridmediamanager/zurg-testing/raw/main/releases'
-        os.environ['BASE_URL'] = base_url
         
         if ZURGVERSION:
             release_version = ZURGVERSION if ZURGVERSION.startswith('v') else 'v' + ZURGVERSION
@@ -138,8 +139,7 @@ def version_check():
             if error:
                 logger.error(error)
                 raise Exception("Failed to get the latest release version.")
-
-        if not download_and_unzip_release(base_url, release_version, architecture):
+        if not download_and_unzip_release(repo_owner, repo_name, release_version, architecture):
             raise Exception("Failed to download and extract the release.")
 
     except Exception as e:

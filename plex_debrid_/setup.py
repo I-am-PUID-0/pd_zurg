@@ -57,7 +57,8 @@ def pd_setup():
                     raise MissingEnvironmentVariable("PLEX_TOKEN")
                 if not PLEXADD:
                     raise MissingEnvironmentVariable("PLEX_ADDRESS")
-                json_data["Plex users"] = [[PLEXUSER, PLEXTOKEN]]
+                if not any([PLEXUSER, PLEXTOKEN] == pair for pair in json_data["Plex users"]):
+                    json_data["Plex users"].append([PLEXUSER, PLEXTOKEN])
                 json_data["Plex server address"] = PLEXADD
                 json_data["Jellyfin API Key"] = ""
                 json_data["Jellyfin server address"] = "http://localhost:8096"

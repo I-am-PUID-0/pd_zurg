@@ -6,11 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Version [2.1.3] - 2024-02-10
+
+### Changed
+
+- Zurg: Zurg setup process uncomments appropriate lines in config.yml for Zurg setup
+
+
 ## Version [2.1.2] - 2024-02-09
 
 ### Changed
 
-- plex_debrid: plex_debrid setup process now checks for existing addtional Plex users
+- plex_debrid: plex_debrid setup process now checks for existing additional Plex users
 
 
 ## Version [2.1.1] - 2024-02-01

@@ -26,7 +26,7 @@ def zurg_setup():
             lines = file.readlines()
         with open(file_path, 'w') as file:
             for line in lines:
-                if line.strip().startswith("token:"):
+                if line.strip().startswith("token:") or line.strip().startswith("# token:"):
                     file.write(f"token: {token}\n")
                 else:
                     file.write(line)
@@ -37,7 +37,7 @@ def zurg_setup():
             lines = file.readlines()
         with open(file_path, 'w') as file:
             for line in lines:
-                if line.strip().startswith("port:"):
+                if line.strip().startswith("port:") or line.strip().startswith("# port:"):
                     file.write(f"port: {port}\n")
                 else:
                     file.write(line)
@@ -49,12 +49,12 @@ def zurg_setup():
 
         with open(file_path, 'w') as file:
             for line in lines:
-                if "username:" in line:
+                if line.strip().startswith("username:") or line.strip().startswith("# username:"):
                     file.write(f"username: {zurguser}\n")
-                elif "password:" in line:
+                elif line.strip().startswith("password:") or line.strip().startswith("# password:"):
                     file.write(f"password: {zurgpass}\n")
                 else:
-                    file.write(line)             
+                    file.write(line)  
                     
     def plex_refresh(file_path):
         logger.info(f"Updating Plex Refresh in config file: {file_path}")

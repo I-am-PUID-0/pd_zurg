@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Version [2.1.4] - 2024-02-27
+
+### Changed
+
+- plex_debrid: plex_debrid setup process automatically checks for existing Plex libraries and adds them to settings.json for Library update services
+
+### Fixed
+
+- [Issue #2](https://github.com/I-am-PUID-0/pd_zurg/issues/2)
+- [Issue #35](https://github.com/I-am-PUID-0/pd_zurg/issues/35)
+
+
 ## Version [2.1.3] - 2024-02-10
 
 ### Changed

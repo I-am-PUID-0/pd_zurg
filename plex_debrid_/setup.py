@@ -1,5 +1,5 @@
 from base import *
-
+from plexapi.server import PlexServer
 
 logger = get_logger()
 
@@ -20,7 +20,11 @@ def pd_setup():
     try:
         with open(settings_file, "r+") as f:
             json_data = load(f)
-
+            library_update_services = json_data.get("Library update services", [])
+            plex_library_refresh = json_data.get("Plex library refresh", [])
+            library_collection_service = json_data.get("Library collection service", [])
+            trakt_refresh_user = json_data.get("Trakt refresh user", [])
+            
             def update_with_default_services(service_type, default_values, conflicting_values=[]):
                 existing_services = json_data.get(service_type, [])
                 for value in conflicting_values:
@@ -49,6 +53,8 @@ def pd_setup():
                 update_with_default_services("Library update services", ["Jellyfin Libraries"], ["Plex Libraries"])
                 json_data["Plex library refresh"] =  []                
                 logger.info("plex_debrid configured for Jellyfin")
+                if not trakt_refresh_user:
+                    logger.info("Addtional configuration is required for Jellyfin. Please autorized and add your Trakt user by editing the Library collection service with the plex_debrid UI!")
 
             if PLEXUSER:
                 if not PLEXUSER:
@@ -57,15 +63,33 @@ def pd_setup():
                     raise MissingEnvironmentVariable("PLEX_TOKEN")
                 if not PLEXADD:
                     raise MissingEnvironmentVariable("PLEX_ADDRESS")
+                logger.info("Waiting for connection to Plex server at {}".format(PLEXADD))
+                connected = False
+                while not connected:
+                    try:
+                        plex = PlexServer(PLEXADD, PLEXTOKEN)
+                        connected = True
+                        os.environ['PLEX_CONNECTED'] = 'True'
+                    except Exception as e:
+                        logger.info("plex_debrid setup failed to connect to Plex server at {}".format(PLEXADD))
+                        logger.info("Please start your plex server now.")
+                        logger.info("Retrying in 5 seconds...")                        
+                        time.sleep(5)         
                 if not any([PLEXUSER, PLEXTOKEN] == pair for pair in json_data["Plex users"]):
                     json_data["Plex users"].append([PLEXUSER, PLEXTOKEN])
                 json_data["Plex server address"] = PLEXADD
+                plex_url = PLEXADD  
+                plex_token = PLEXTOKEN
+                plex = PlexServer(plex_url, plex_token)
+                library_section_ids = [str(library.key) for library in plex.library.sections()]
                 json_data["Jellyfin API Key"] = ""
                 json_data["Jellyfin server address"] = "http://localhost:8096"
-                update_with_default_services("Library collection service", ["Plex Library"], ["Trakt Collection"])
-                if PLEXREFRESH is None or PLEXREFRESH.lower() == "false":
-                    update_with_default_services("Library update services", ["Plex Libraries"], ["Jellyfin Libraries"])
-                    update_with_default_services("Plex library refresh", ["1", "2"], [])
+                if not library_collection_service or "Jellyfin Libraries" in library_update_services:   
+                    json_data["Library collection service"] = ["Plex Library"]
+                if not library_update_services or "Jellyfin Libraries" in library_update_services:    
+                    json_data["Library update services"] = ["Plex Libraries"]
+                if not plex_library_refresh:
+                    json_data["Plex library refresh"] = library_section_ids
                 logger.info("plex_debrid configured for Plex")
                 
             if SEERRADD or SEERRAPIKEY:

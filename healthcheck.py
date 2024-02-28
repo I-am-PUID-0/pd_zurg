@@ -24,7 +24,8 @@ try:
         RCLONEMN_RD = RCLONEMN_AD = RCLONEMN
 
     mount_type = "serve nfs" if not NFSMOUNT is None and str(NFSMOUNT).lower() == 'true' else "mount"
-
+    plex_debrid_should_run = str(PLEXDEBRID).lower() == 'true' and os.getenv('PLEX_CONNECTED', 'False') == 'True'
+    
     process_info = {
         "zurg_rd": {
             "regex": re.compile(rf'/zurg/RD/zurg.*--preload', re.IGNORECASE),
@@ -39,7 +40,7 @@ try:
         "plex_debrid": {
             "regex": re.compile(r'python ./plex_debrid/main.py --config-dir /config'),
             "error_message": "The plex_debrid process is not running.",
-            "should_run": str(PLEXDEBRID).lower() == 'true'
+            "should_run": plex_debrid_should_run
         },
         "rclonemn_rd": {
             "regex": re.compile(rf'rclone {mount_type} {re.escape(RCLONEMN_RD)}:'),

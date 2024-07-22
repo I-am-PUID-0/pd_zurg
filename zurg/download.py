@@ -152,10 +152,13 @@ def version_check():
             repo_name = 'zurg'               
         else:
             repo_owner = 'debridmediamanager'
-            repo_name = 'zurg-testing'          
-        
+            repo_name = 'zurg-testing'
+            
         if ZURGVERSION:
-            release_version = ZURGVERSION if ZURGVERSION.startswith('v') else 'v' + ZURGVERSION
+            if ZURGVERSION.lower() == 'nightly':
+                release_version = ZURGVERSION  # Don't prepend 'v' for nightly
+            else:
+                release_version = 'v' + ZURGVERSION if not ZURGVERSION.startswith('v') else ZURGVERSION
             logger.info("Using release version from environment variable: %s", release_version)
         else:      
             release_version, error = get_latest_release(repo_owner, repo_name)
